@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>{{ title }}</title>
+    <meta name="description" content="The most complete tool that you need to collect and analyze WebRTC stats for your app">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google" content="notranslate">
+
+    {# favicon data #}
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/img/favicon/apple-touch-icon.png">
+    <link rel="mask-icon" href="/static/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+
+    <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
+    <meta name="msapplication-TileColor" content="#2b5797">
+
+    <link rel="icon" type="image/png" href="/static/img/favicon/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/static/img/favicon/favicon-16x16.png" sizes="16x16">
+    <link rel="shortcut icon" href="/static/img/favicon/favicon.ico">
+
+    {# when app will run offline #}
+    {# <link rel="manifest" href="/static/img/favicon/site.webmanifest"> #}
+    <meta name="theme-color" content="#ffffff">
+
+    {# more icons for iOS app: https://gist.github.com/tfausak/2222823 #}
+
+    {# app manifest #}
+    {# <link rel="manifest" href="/static/img/favicon/manifest.json"> #}
+
+    {# <meta property="og:locale" content="en" /> #}
+    <meta property="og:site_name" content="peermetrics.io" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:url" content="https://www.peermetrics.io" />
+
+    {# CSS #}
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,400i,500" rel="stylesheet">
+
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css" media="all" />
+
+    {# if we are on dev load from local as much as possible #}
+    {% if DEV %}
+      <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+      <script src="/static/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+      <script src="/static/node_modules/wretch/dist/bundle/wretch.js"></script>
+      <script src="/static/node_modules/moment/moment.js"></script>
+    {% else %}
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+      <script src="https://unpkg.com/wretch@1.7.1/dist/bundle/wretch.js"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+
+    {% endif %}
+
+    {% if not DEV %}
+      <!-- Google Analytics -->
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-137926322-1', 'auto');
+      ga('send', 'pageview');
+      </script>
+      <!-- End Google Analytics -->
+    {% endif %}
+
+    {# block used to load additional CSS on the header of the page #}
+    {% block assets %}
+    {% endblock %}
+
+    <script>
+      /**
+       * Define this object globally and before anything else
+       * @type {Object}
+       */
+      window.peermetrics = {
+        settings: {{ template_vars|safe }}
+      }
+    </script>
+    <script src="/static/js/peermetrics.js"></script>
+  </head>
+  <body>
+    {% block header %}
+      {% include "components/header.html" %}
+    {% endblock %}
+
+    <main>
+      {% block content %}
+      {% endblock %}
+    </main>
+
+    {% block footer %}
+      {% include "components/footer.html" %}
+    {% endblock %}
+
+    {% block scripts %}
+    {% endblock %}
+  </body>
+</html>

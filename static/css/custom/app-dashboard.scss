@@ -1,0 +1,23 @@
+
+$chart-min-height: 280px;
+
+.edit-app-name {
+    @extend .opacity-20;
+
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+.chart {
+    min-height: $chart-min-height;
+    display: flex;
+    
+    // TODO: make this more specific
+    > div {
+        flex: 1;
+    }
+
+    #map-chart {
+        height: 560px;
+    }
+}

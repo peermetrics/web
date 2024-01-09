@@ -1,0 +1,45 @@
+{
+  "name": "peermetrics-web",
+  "version": "1.0.0",
+  "description": "web service of peermetrics",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "build-prod": "rollup -c --environment BUILD:production",
+    "watch": "rollup -c -w",
+    "css": "sass static/css/main.scss static/css/main.css --style compressed --no-source-map --quiet",
+    "css-watch": "sass --watch static/css/main.scss static/css/main.css --style compressed --no-source-map",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onel/api-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/peermetrics/web"
+  },
+  "homepage": "https://github.com/peermetrics/web",
+  "dependencies": {
+    "bootstrap": "^4.6.1",
+    "bootstrap-vue": "^2.21.2",
+    "highcharts": "^10.2.0",
+    "jquery": "^3.6.0",
+    "moment": "^2.29.1",
+    "prismjs": "^1.27.0",
+    "smartwizard": "^4.4.1",
+    "vue": "^2.6.14",
+    "wretch": "^1.7.9"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.1.0",
+    "@rollup/plugin-node-resolve": "^7.1.3",
+    "rollup": "^2.68.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-vue": "^5.1.9",
+    "sass": "^1.49.9",
+    "vue-template-compiler": "^2.6.14"
+  }
+}

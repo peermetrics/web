@@ -1,0 +1,29 @@
+
+
+.integration-logos {
+    .plus-sign {
+        font-size: 38px;
+        margin: 14px 0;
+    }
+
+    img {
+        max-width: 200px;
+    }
+
+    // some custom logo sizing
+    .pm-logo {
+        max-width: 250px;
+    }
+
+    .resize {
+        max-width: 100px;
+    }
+
+}
+
+.integrations-steps {
+    h4 {
+        @extend .mt-4;
+        margin-bottom: $spacer;
+    }
+}

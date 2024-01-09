@@ -1,0 +1,28 @@
+
+.integrations {
+    align-content: center;
+
+    .col {
+        display: flex;
+    }
+
+    img {
+        max-height: 50px;
+        object-fit: contain;
+    }
+
+    .soon {
+        display: flex;
+        flex-direction: column;
+
+        span {
+            display: inline-block;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        img {
+            filter: grayscale(100%);
+        }
+    }
+}

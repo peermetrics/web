@@ -1,0 +1,68 @@
+<header class="navbar-container">
+  <div class="bg-dark navbar-dark" data-sticky="top">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="{{ url('home') }}">
+          <img class="logo logo-sm" alt="Peer metrics logo" src="/static/img/logo.png" />
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <i class="icon-menu h4"></i>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a href="{{ url('about') }}" class="nav-link">About</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                    Integrations
+                </a>
+                <div class="dropdown-menu" aria-labelledby="organization-dropdown">
+                    <a class="dropdown-item" href="{{ url('livekit-integration') }}">
+                      LiveKit
+                    </a>
+                    <a class="dropdown-item" href="{{ url('twilio-integration') }}">
+                      Twilio
+                    </a>
+                    <a class="dropdown-item" href="{{ url('mediasoup-integration') }}">
+                      Mediasoup
+                    </a>
+                    <a class="dropdown-item" href="{{ url('janus-integration') }}">
+                      Janus
+                    </a>
+                    <a class="dropdown-item" href="{{ url('vonage-integration') }}">
+                      Vonage
+                    </a>
+                    <a class="dropdown-item" href="{{ url('agora-integration') }}">
+                      Agora
+                    </a>
+                    <a class="dropdown-item" href="{{ url('pion-integration') }}">
+                      Pion
+                    </a>
+                </div>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('pricing') }}" class="nav-link">Pricing</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('docs') }}" class="nav-link">Documentation</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('how-it-works') }}" class="nav-link demo-btn">See how it works</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a href="{{ url('sign-up') }}">Sign up</a>
+              <span>&nbsp;or&nbsp;</span><a href="{{ url('sign-in') }}">Sign in</a>
+            </li>
+          </ul>
+
+        </div>
+        <!--end nav collapse-->
+      </nav>
+    </div>
+    <!--end of container-->
+  </div>
+</header>

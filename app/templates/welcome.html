@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block assets %}
+    {# <link href="/css/entypo.css" rel="stylesheet" type="text/css" media="all" /> #}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="main-container">
+      <section class="space-sm">
+        <div class="container">
+          <div class="row mb-4">
+            <div class="col text-center">
+              <a href="{{ url('home') }}">
+                <img class="logo" src="/static/img/logo-icon.png" alt="Logo" />
+              </a>
+            </div>
+            <!--end of col-->
+          </div>
+          <!--end of row-->
+        </div>
+
+        <nav aria-label="breadcrumb" role="navigation">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-12 col-lg-10">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="{{ url('home') }}">
+                      Home
+                    </a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                    Welcome
+                  </li>
+                </ol>
+              </div>
+              <!--end of col-->
+            </div>
+            <!--end of row-->
+          </div>
+          <!--end of container-->
+        </nav>
+
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+              <div class="card card-lg">
+                <div class="card-body">
+                  <div class="form wizard" method="post">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                    <ul class="nav nav-tabs text-center row justify-content-center">
+                      <li class="col-3 col-md-2"><a href="#first" class="step-circle step-circle-sm">1</a>
+                      </li>
+                      <li class="col-3 col-md-2"><a href="#second" class="step-circle step-circle-sm">2</a>
+                      </li>
+                      <li class="col-3 col-md-2"><a href="#third" class="step-circle step-circle-sm">3</a>
+                      </li>
+                      <li class="col-3 col-md-2"><a href="#fourth" class="step-circle step-circle-sm">4</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content">
+                      <div id="first">
+                        <div class="row justify-content-around align-items-center">
+                          <div class="col-4 col-md-4 col-lg-4 mb-4">
+                            <img alt="Image" src="/static/img/welcome/step-1.jpg" class="w-100" />
+                          </div>
+                          <!--end of col-->
+                          <div class="col-12 col-md-8 col-lg-8 mb-4">
+                            <div>
+                              <h6 class="title-decorative mb-2">Step 1.</h6>
+                              <h4 class="mb-2">Welcome to peer metrics</h4>
+                              <p>Let's create the organization. This will be used to group all the apps:</p>
+                              <div class="form-group">
+                                <input id="organization-name" type="text" placeholder="Eg: 'Super Awesome Inc.'" name="name" class="form-control form-control-lg" required />
+                              </div>
+                            </div>
+                            <button class="btn btn-success sw-btn-next create-org" type="button">Create</button>
+                          </div>
+                          <!--end of col-->
+                        </div>
+                        <!--end of row-->
+                      </div>
+                      <div id="second">
+                        <div class="row justify-content-around align-items-center">
+                          <div class="col-4 col-md-4 col-lg-4 mb-4">
+                            <img alt="Image" src="/static/img/welcome/step-2.jpg" class="w-100" />
+                          </div>
+                          <!--end of col-->
+                          <div class="col-12 col-md-8 col-lg-8 mb-4">
+                            <div>
+                              <h6 class="title-decorative mb-2">Step 2.</h6>
+                              <h4 class="mb-2">Create your first app</h4>
+                              <p>
+                                You can use apps to organize metrics inside your organization <br>
+                                (eg. developement, production)
+                              </p>
+                              <div class="form-group">
+                                <input id="application-name" type="text" placeholder="App name" name="organization" class="form-control form-control-lg" value="Developement" required />
+                              </div>
+                            </div>
+                            <button class="btn btn-success sw-btn-next create-app" type="button">Create</button>
+                          </div>
+                          <!--end of col-->
+                        </div>
+                        <!--end of row-->
+                      </div>
+                      <div id="third">
+                        <div class="row justify-content-around align-items-center">
+                          {# TODO: readd images to the last 2 steps #}
+                          {# <div class="col-4 col-md-4 col-lg-4 mb-4">
+                            <img alt="Image" src="/static/img/graphic-man-box.svg" class="w-100" />
+                          </div> #}
+                          <!--end of col-->
+                          <div class="col-12 col-md-8 col-lg-8 mb-4">
+                            <div class="mb-4">
+                              <h6 class="title-decorative mb-2">Step 3.</h6>
+                              <h4 class="mb-2">Load the SDK</h4>
+                              <p>
+                                There are two way you can integrate with Peer metric's SDK:
+                              </p>
+                              <ul class="list mb-2">
+                                <li>
+                                  <p class="mb-2">
+                                    Usage with Webpack, Browserify, & Other Bundlers
+                                  </p>
+                                  <p>
+                                    To use with your existing build process just install and import the NPM package
+                                  </p>
+                                    <pre class="language-bash"><code>npm install @peermetrics/sdk</code></pre>
+                                  <p>
+                                    And then import it
+                                  </p>
+                                  <pre class="language-javascript"><code>import {PeerMetrics} from '@peermetrics/sdk'</code></pre>
+                                </li>
+                                <li>
+                                  <p class="mb-2">
+                                    Usage in the browser
+                                  </p>
+                                  <p>
+                                    To use it directly in the browser, just add the snippet near the end of the body tag
+                                  </p>
+                                  <code>
+                                    <pre class="language-html"><code>&lt;script src=&quot;//cdn.peermetrics.io/js/sdk/peermetrics.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+                                  </code>
+                                </li>
+                              </ul>
+                              <p>
+                                To initialize the the sdk, use:
+                              </p>
+                              <pre class="language-javascript"><code>var peerMetrics = new PeerMetrics({
+    apiKey: 'your api key',
+    userId: '1',
+    userName: 'John Doe',
+    conferenceId: '1',
+    conferenceName: 'Conference name',
+    appVersion: '1.0.0',
+})
+
+await peerMetrics.initialize()</code></pre>
+                              <p>
+                                  And, to start collecting metrics from your calls, use the <code class="language-javascript">addConnection()</code> method:
+                              </p>
+                              <pre class="language-javascript"><code>peerMetrics.addConnection({
+    pc: peerConnection, // the RTCPeerConnection instance
+    peerId: '1' // the participant id of this specific peer
+})</code></pre>
+                              <p class="mt-5">
+                                You can read the docs on how to use the sdk <a href="{{ url('docs') }}" target="_blank">here</a>.
+                              </p>
+                            </div>
+                            <button class="btn btn-success sw-btn-next" type="button">Next</button>
+                          </div>
+                          <!--end of col-->
+                        </div>
+                        <!--end of row-->
+                      </div>
+                      <div id="fourth">
+                        <div class="row justify-content-around align-items-center">
+                          {# <div class="col-8 col-md-6 col-lg-5 mb-4">
+                            <img alt="Image" src="/static/img/graphic-man-computer.svg" class="w-100" />
+                          </div> #}
+                          <!--end of col-->
+                          <div class="col-12 col-md-6 col-lg-5 mb-4">
+                            <div>
+                              <h6 class="title-decorative mb-2">Step 4.</h6>
+                              <h4 class="mb-2">You're all set</h4>
+                              <p>
+                                Well done, you've completed the process.
+                              </p>
+                              <p>
+                                You'll start seeing data on your dashboard as soon as you start collecting metrics.
+                              </p>
+                            </div>
+                            <a class="btn btn-success btn-lg mt-4" href="{{ url('dashboard') }}">
+                              Go to Dashboard
+                            </a>
+                          </div>
+                          <!--end of col-->
+                        </div>
+                        <!--end of row-->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--end of col-->
+          </div>
+          <!--end of row-->
+        </div>
+        <!--end of container-->
+      </section>
+      <!--end of section-->
+    </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/libs/prism/prism.js"></script>
+
+  {% if DEV %}
+    <script src="/static/node_modules/smartwizard/dist/js/jquery.smartWizard.min.js"></script>
+  {% else %}
+    <script src="https://cdn.jsdelivr.net/npm/smartwizard@4.4.1/dist/js/jquery.smartWizard.min.js" integrity="sha256-uSROG3lBu3YW4HUkG1YPq1wvjHsBDmc2pf9UQ73XxbA=" crossorigin="anonymous"></script>
+  {% endif %}
+
+  <script src="/static/js/welcome.js"></script>
+{% endblock %}
+
+{# override the footer block #}
+{% block footer %}
+{% endblock %}

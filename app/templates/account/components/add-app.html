@@ -1,0 +1,63 @@
+<section class="height-70">
+    <div class="container">                
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="card card-lg text-center">
+                    {# message the card if the user already had apps added #}
+                    {% if apps %}
+                      <div class="card-body">
+                          <i class="icon-add-to-list display-4 opacity-20"></i>
+                          <h2 class="h5">Add a new app to this organization</h2>
+                          <h3 class="h6 mb-5 text-muted">You currently have {{ apps|length }} {{ 'apps' if apps|length > 1 else 'app' }}.</h3>
+
+                          <button data-toggle="modal" data-target="#create-app-modal" class="btn btn-lg btn-primary">
+                              Add new app
+                          </button>
+                      </div>
+                    {% else %}
+                      <div class="card-body">
+                          <i class="icon-add-to-list display-4 opacity-20"></i>
+                          <h1 class="h5">
+                              This organization has no apps yet
+                          </h1>
+                          <p>
+                              An app is a way to group metrics inside an organization.
+                          </p>
+                          <p>
+                              For example you can create one for a specific environment: development, production, or for a specific domain.
+                          </p>
+                          <button data-toggle="modal" data-target="#create-app-modal" class="btn btn-lg btn-primary">
+                              Add new app
+                          </button>
+                      </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!--end of col-->
+        </div>
+    </div>
+</section>
+
+
+<div class="modal fade" id="create-app-modal" tabindex="-1" role="dialog" aria-labelledby="create-app-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="create-app-title">Add a new app</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="app-name" class="col-form-label">App name:</label>
+            <input id="app-name" type="text" class="form-control" maxlength="64" />
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary create-app">Add app</button>
+      </div>
+    </div>
+  </div>
+</div>

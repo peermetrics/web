@@ -1,0 +1,56 @@
+{# search module #}
+<form class="form-inline col p-0 pl-md-2 pr-md-3">
+    <div class="dropdown w-100">
+        <input id="search-input" class="form-control w-100" type="search" placeholder="Search by participant ID, conference ID, etc." aria-label="Search" aria-haspopup="true">
+        <div id="search-results" class="dropdown-menu w-100">
+            
+        </div>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        var searchInput = $('#search-input')
+        var searchResults = $('#search-results')
+
+        var query = function (val) {
+            searchInput.attr('disabled', true).removeClass('is-invalid')
+            console.log(val)
+
+            peermetrics.get(peermetrics.urls['search'], {
+                query: val
+            }).then(function (res) {
+                console.log(res)
+                res = res.matches
+                if (res && res.length) {
+                    searchResults.html(res.map(function (result) {
+                        return `<a class="dropdown-item" href="${result.url}">
+                                    ${result.name ? result.name + ',' : ''} ${result.id}, 
+                                    <span class="text-muted">${result.type}</span>
+                                </a>`
+                    }))
+                } else {
+                    searchResults.html('<p class="dropdown-header">Could not find any results for this query</p>')
+                }
+                searchResults.addClass('show')
+                searchInput.one('blur', function (ev) {
+                    searchResults.removeClass('show')
+                })
+
+            }).catch(function (res) {
+                searchInput.addClass('is-invalid')
+            }).finally(function () {
+                searchInput.attr('disabled', false)
+            })
+        }
+
+        searchInput.on('keydown', function (ev) {
+
+            // the enter key
+            if (ev.which === 13) {
+                ev.preventDefault()
+                query(searchInput.val())
+            }
+        })
+    })
+</script>

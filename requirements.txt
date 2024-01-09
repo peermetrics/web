@@ -1,0 +1,9 @@
+argon2-cffi
+Django<3.0
+gunicorn
+PyJWT==1.7.1
+psycopg2-binary
+validators==0.14.2
+
+Jinja2
+# pytz

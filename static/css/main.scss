@@ -1,0 +1,18 @@
+
+
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "variables";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+@import "components";
+
+// custom css
+@import "custom/app-dashboard";
+@import "custom/footer";
+@import "custom/header";
+@import "custom/homepage";
+@import "custom/integrations";
+@import "custom/loader";
+@import "custom/profile";
+@import "custom/organization";

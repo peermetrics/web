@@ -1,0 +1,85 @@
+<div class="navbar-container">
+    <div class="bg-dark navbar-dark" data-sticky="top">
+        <div class="container">
+            <nav class="account-header navbar navbar-expand-lg">
+                <a class="navbar-brand" href="{{ url('dashboard') }}">
+                    <img class="logo logo-sm" src="/static/img/logo-white.png" alt="peer metrics logo" />
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="icon-menu h4"></i>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a href="{{ url('dashboard') }}" class="nav-link"></a>
+                        </li>
+
+                        {% if organizations %}
+                            <li class="nav-item dropdown">
+                                <a id='organization-dropdown' class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                                    Organizations
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="organization-dropdown">
+                                    {% for org in organizations %}
+                                        <a class="dropdown-item" href="{{ url('organization', organization_id=org.id) }}">
+                                            <span class="h6 mb-0">{{ org.name }}</span>
+                                        </a>
+                                        {# {% if loop.last %}
+                                            <div class="dropdown-divider"></div>
+                                            <a href="{{ url('organization', organization_id=org.id) }}" class="dropdown-item text-muted" >
+                                                <span class="h6 mb-0"><i class="icon-add"></i> Add a new organization</span>
+                                            </a>
+                                        {% endif %} #}
+                                    {% endfor %}
+                                </div>
+                            </li>
+                        {% endif %}
+                        
+                        {# if apps is set then the user chose an organization #}
+                        {% if apps %}
+                            <li class="nav-item dropdown">
+                                <a id='app-dropdown' class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                                    Apps
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="app-dropdown">
+                                    {% for app in apps %}
+                                        <a class="dropdown-item" href="{{ url('app', app_id=app.id) }}">
+                                            <span class="h6 mb-0">{{ app.name }}</span>
+                                        </a>
+                                        {# {% if loop.last %}
+                                            <div class="dropdown-divider"></div>
+                                            <a href="{{ url('app', app_id=app.id) }}" class="dropdown-item text-muted" >
+                                                <span class="h6 mb-0"><i class="icon-add"></i> Add a new app</span>
+                                            </a>
+                                        {% endif %} #}
+                                    {% endfor %}
+                                </div>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    
+                    {% include 'account/components/search.html' %}
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="componentsDropdown" role="button" data-toggle="dropdown">My Account</a>
+                            <div class="dropdown-menu" aria-labelledby="componentsDropdown">
+                                <a class="dropdown-item" href="https://github.com/peermetrics/peermetrics" target="_blank">
+                                    Github <i class="icon-export"></i>
+                                </a>
+                                <a class="dropdown-item" href="{{ url('docs') }}" target="_blank">
+                                    Javascript SDK <i class="icon-export"></i>
+                                </a>
+                                {# <div class="dropdown-divider"></div> #}
+                                {# <a class="dropdown-item" href="{{ url('logout') }}">Logout</a> #}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <!--end of collapse-->
+            </nav>
+        </div>
+        <!--end of container-->
+    </div>
+</div>

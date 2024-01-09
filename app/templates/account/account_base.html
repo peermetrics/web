@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% from "components/breadcrumbs.html" import breadcrumbs_macro %}
+
+
+{% block assets %}
+  <link href="/static/css/entypo.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block header %}
+  {% include "account/components/header.html" %}
+{% endblock %}
+
+{% block content %}
+  {% if breadcrumbs %}
+    {{ breadcrumbs_macro(breadcrumbs) }}
+  {% endif %}
+  <section>
+    <div class="container">
+      {% block container %}
+      {% endblock %}
+    </div>
+  </section>
+{% endblock %}
+
+{# override the footer block #}
+{% block footer %}
+  {% include "account/components/footer.html" %}
+{% endblock %}

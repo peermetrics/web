@@ -1,0 +1,46 @@
+
+{% extends "account/account_base.html" %}
+
+
+{% block container %}
+    <div class="row">
+        <div class="col mb-4">
+            <h2>Your organizations</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for org in organizations %}
+            <div class="col-12">
+                <div class="card">
+                    <a href="{{ url('organization', organization_id=org.id) }}">
+                        <div class="card-body">
+                            {{ org.name }}
+                        </div>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <section class="height-70 mt-3">
+        <div class="container">                
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-6 col-lg-5">
+                    <div class="card card-lg text-center">
+                        <div class="card-body">
+                            <i class="icon-add-to-list display-4 opacity-20"></i>
+                            <h1 class="h5">
+                                Need more organizations?
+                            </h1>
+                            <p>
+                                Check out the hosted version of peer metrics.
+                            </p>
+                            <a href="https://peermetrics.io" class="link" target="_blank">Check hosted version</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

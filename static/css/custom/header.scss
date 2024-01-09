@@ -1,0 +1,14 @@
+
+// Custom css for the header
+
+// override some things for the header logo
+.navbar-brand {
+    padding-top: 0.1rem;
+}
+
+.demo-btn {
+    border: 1px solid $white;
+    border-radius: 4px;
+    padding: 0.4rem 0.8rem;
+    margin: 0 0 0 0.3rem;
+}
