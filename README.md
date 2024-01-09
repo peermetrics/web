@@ -4,6 +4,18 @@
 
 Web, is the user facing part of peer metrics. It contains all the functionality to view and analyze the collected events
 
+
+
+## How to run locally
+
+To run this locally check the main [project page](https://github.com/peermetrics/peermetrics).
+
+## Tech stack
+
+- Language: Python 3.8
+- Framework: Django
+- DB: Postgres
+
 ### Frontend
 
 ##### TLDR:
