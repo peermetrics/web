@@ -1,3 +1,7 @@
 .git
-node_modules/
+.github
+# TODO: we need custom build for web to make this work. can't use docker compose
+# DOCKER_BUILDKIT=1
+# docker build -f ./web/Dockerfile.dev ./web/ -t peermetrics/web:dev
+# node_modules/
 __pycache__/
