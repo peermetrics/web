@@ -3,11 +3,11 @@
 node_modules/
 
 # built web js files
-web/static/js/**/index.js
+static/js/**/index.js
 
 # sourcemaps
-web/static/**/*.js.map
+static/**/*.js.map
 
 # css files
-/web/static/css/main.css
+static/css/main.css
 
