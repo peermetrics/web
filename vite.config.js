@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue2';
 
 const isProd = process.env.BUILD === 'production'
-console.log('isProd!!!!!!!!!', isProd)
 const target = process.env.BUILD_TARGET;
 export default defineConfig({
   plugins: [

@@ -45,3 +45,4 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
  * @license MIT
  * https://github.com/bootstrap-vue/bootstrap-vue/blob/master/LICENSE
  */var j1="BootstrapVue",F1=Td({plugins:{componentsPlugin:p1,directivesPlugin:L1}}),H1={install:F1,NAME:j1};Vue.use(H1),new Vue({el:"#app",render:r=>r(Ow)})})(Vue);
+//# sourceMappingURL=index.js.map
