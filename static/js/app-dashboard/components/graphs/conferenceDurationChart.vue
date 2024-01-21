@@ -1,7 +1,14 @@
 <template>
   <div class="chart">
     <NoDataMessage v-if="seriesData.length < 1" />
-    <div v-else id="conference-duration-chart"></div>
+    <bar-chart
+        v-else
+        id="conference-duration-chartjs"
+        :labels="categories"
+        :datasets="series"
+        yTitle="No. of conferences"
+        @chart-click="onChartClick"
+    />
 
     <conference-list-modal
       ref="conferencesModal"
@@ -11,9 +18,9 @@
 </template>
 
 <script>
-import createColumnChart from "../mixins/createColumnChart";
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import ConferenceListModal from "../../../components/conferenceListModal.vue";
+import BarChart from "./barChart.vue";
 
 export default {
   name: "conference-duration-chart",
@@ -24,49 +31,18 @@ export default {
     },
   },
   components: {
+    BarChart,
     NoDataMessage,
     ConferenceListModal,
   },
 
-  mixins: [createColumnChart],
-
   data() {
     return {
-      chartId: "conference-duration-chart",
-      titleYAxis: "No. of conferences",
       modalConferences: [],
     };
   },
-  mounted() {},
 
   computed: {
-    chartOptions() {
-      return {
-        plotOptions: {
-          column: {
-            pointPadding: 0.2,
-            borderWidth: 0,
-            stacking: "normal",
-          },
-
-          series: {
-            cursor: "pointer",
-            events: {
-              click: (event) => {
-                const conferences = this.conferences.filter((conf) => {
-                  // if the conf id is inside data
-                  return event.point.data.has(conf.id)
-                })
-
-                this.modalConferences = conferences;
-                this.$refs["conferencesModal"].show();
-              },
-            },
-          },
-        },
-      }
-    },
-
     durations() {
       // create an array with all the conf durations
       let confDurations = this.conferences.map((conference) => {
@@ -88,13 +64,10 @@ export default {
       const durations = this.durations.reduce((accumulator, currentValue) => accumulator + currentValue.number, 0)
 
       if (durations) {
-        return this.durations.map((n) => {
-          return {
-            y: n.number,
-            // create a unique list of conf ids
-            data: new Set(n.data)
-          }
-        });
+        return {
+          data: this.durations.map((n) => n.number),
+          values: this.durations.map((n) => new Set(n.data))
+        };
       } else {
         return [];
       }
@@ -102,24 +75,36 @@ export default {
     series() {
       return [
         {
-          name: "Conferences",
-          data: this.seriesData,
-          color: peermetrics.colors.info
+          label: "Conferences",
+          data: this.seriesData.data,
+          backgroundColor: peermetrics.colors.info,
+          values: this.seriesData.values
         }
       ];
     }
   },
 
+  methods: {
+    onChartClick(e) {
+      this.modalConferences = this.conferences.filter((conf) => {
+        return this.seriesData.values[e.index].has(conf.id)
+      });
+
+      this.$refs["conferencesModal"].show();
+    }
+  },
+
   watch: {
     conferences(val, prev) {
-      this.dataWatcher(val, prev)
+      // Question: how to trigger this watcher
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.card-custom-column {
-  line-height: 10;
+#conference-duration-chartjs {
+  max-height: 280px;
+  background-color: white;
 }
 </style>
