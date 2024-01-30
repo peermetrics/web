@@ -24,7 +24,7 @@ export default {
     },
     labels: {
       type: Array,
-      default: () => {}
+      default: () => []
     },
     datasets: {
       type: Array,
@@ -45,8 +45,6 @@ export default {
           },
           datalabels: {
             color: 'black',
-            // align: 'end',
-            // offset: '60',
             display: function(context) {
               return context.dataset.data[context.dataIndex] > 0;
             },
@@ -57,11 +55,13 @@ export default {
         },
         scales: {
           x: {
+            stacked: true,
             grid: {
               display: false,
             }
           },
           y: {
+            stacked: true,
             suggestedMax: Math.ceil(Math.max(...this.datasets.flatMap(obj => obj.data)) / 10) * 10,
             title: {
               display: true,

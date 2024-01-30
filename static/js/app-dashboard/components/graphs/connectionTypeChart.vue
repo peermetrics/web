@@ -1,13 +1,20 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.series.length===0" />
-    <div v-else id="type-of-connection-chart"></div>
+    <NoDataMessage v-if="dataSeries.datasets.length===0" />
+    <pie-chart
+        v-else
+        id="type-of-connection-chartjs"
+        tooltipTitle="Connection Types"
+        :labels="dataSeries.labels"
+        :datasets="dataSeries.datasets"
+        :count="dataSeries.count"
+    />
   </div>
 </template>
 
 <script>
-import createPieChart from "../mixins/createPieChart";
 import NoDataMessage from "../../../components/noDataMessage.vue";
+import PieChart from "./pieChart.vue";
 
 export default {
   name: "connection-type-chart",
@@ -20,35 +27,23 @@ export default {
   },
 
   components: {
-    NoDataMessage
+    NoDataMessage,
+    PieChart
   },
-
-  data() {
-    return {
-      colors: ["rgb(124,181,236)", "rgb(228,211,84)"],
-      chartId: "type-of-connection-chart",
-      seriesName: "Connection Types",
-      pointFormat:
-        '<span style="color:{point.color}">{point.name}</span>: ' +
-        "<b>{point.y:.2f}%</b><br/>Count:<b>{point.count}</b></br>"
-    };
-  },
-
-  mixins: [createPieChart],
 
   computed: {
     dataSeries() {
       let result = this.connections
-        .map(connection => {
-          // get connection type from each one
-          return connection.type;
-        })
-        // concat the arrays to create one big one
-        .reduce((arr, cur) => {
-          return arr.concat(cur);
-        }, [])
-        // filter out invalid values
-        .filter(arr => !!arr);
+          .map(connection => {
+            // get connection type from each one
+            return connection.type;
+          })
+          // concat the arrays to create one big one
+          .reduce((arr, cur) => {
+            return arr.concat(cur);
+          }, [])
+          // filter out invalid values
+          .filter(arr => !!arr);
 
       let types = peermetrics.utils.reduce(result);
 
@@ -66,28 +61,27 @@ export default {
 
       let series = []
       if (connectionsCount) {
-        series.push({
-          name: 'Direct',
-          y: (grouping['direct'] / connectionsCount) * 100,
-          count: grouping['direct']
-        }, {
-          name: 'Relayed',
-          y: (grouping['relayed'] / connectionsCount) * 100,
-          count: grouping['relayed']
-        })
+        series.push((grouping['direct'] / connectionsCount) * 100, (grouping['relayed'] / connectionsCount) * 100)
       }
 
       return {
-        series,
-        drilldown: null
-      };
+        labels: ['Direct', 'Relayed'],
+        datasets: series,
+        count: [grouping['direct'], grouping['relayed']]
+      }
     }
   },
 
   watch: {
     connections(val, prev) {
-      this.dataWatcher(val, prev)
+      // TODO: trigger and test it
     }
   }
 };
 </script>
+
+<style scoped>
+#type-of-connection-chartjs {
+  background-color: white;
+}
+</style>

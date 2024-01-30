@@ -1,13 +1,20 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.series.length===0" />
-    <div v-else id="number-of-participants-chart"></div>
+    <NoDataMessage v-if="dataSeries.datasets.length===0" />
+    <pie-chart
+        v-else
+        id="number-of-participants-chartjs"
+        tooltipTitle="Number of participants"
+        :labels="dataSeries.labels"
+        :datasets="dataSeries.datasets"
+        :count="dataSeries.count"
+    />
   </div>
 </template>
 
 <script>
-import createPieChart from "../mixins/createPieChart";
 import NoDataMessage from "../../../components/noDataMessage.vue";
+import PieChart from "./pieChart.vue";
 
 export default {
   name: "participants-chart",
@@ -18,18 +25,10 @@ export default {
     }
   },
   components: {
+    PieChart,
     NoDataMessage
   },
-  data() {
-    return {
-      chartId: "number-of-participants-chart",
-      seriesName: "Number of participants",
-      pointFormat:
-        '<span style="color:{point.color}">{point.name}</span>: ' +
-        "<b>{point.y:.2f}%</b><br/>Count:<b>{point.count}</b></br>"
-    };
-  },
-  mixins: [createPieChart],
+
   mounted() {},
   computed: {
     dataSeries() {
@@ -38,27 +37,34 @@ export default {
       });
       let participants = peermetrics.utils.reduce(arr);
       let conferencesCount = this.conferences.length;
-      let series = [];
+      let datasets = [];
+      let labels = [];
+      let count = [];
 
       for (let key of Object.keys(participants)) {
-        series.push({
-          name: key,
-          y: (participants[key] / conferencesCount) * 100,
-          count: participants[key]
-        });
+        labels.push(key)
+        count.push(participants[key])
+        datasets.push((participants[key] / conferencesCount) * 100)
       }
 
       return {
-        series,
-        drilldown: null
+        labels,
+        datasets,
+        count
       };
     }
   },
 
   watch: {
     conferences(val, prev) {
-      this.dataWatcher(val, prev)
+      // TODO: trigger and test it
     }
   }
 };
 </script>
+
+<style scoped>
+#number-of-participants-chartjs {
+  background-color: white;
+}
+</style>

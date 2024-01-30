@@ -138,14 +138,9 @@ export default {
     series() {
       return [
         {
-          label: "Ongoing",
-          data: this.seriesData.ongSeriesData,
-          backgroundColor: peermetrics.colors.info,
-        },
-        {
-          label: "Errors",
-          data: this.seriesData.errSeriesData,
-          backgroundColor: peermetrics.colors.error,
+          label: "Successful",
+          data: this.seriesData.succSeriesData,
+          backgroundColor: peermetrics.colors.default,
         },
         {
           label: "Warnings",
@@ -153,9 +148,14 @@ export default {
           backgroundColor: peermetrics.colors.warning,
         },
         {
-          label: "Successful",
-          data: this.seriesData.succSeriesData,
-          backgroundColor: peermetrics.colors.default,
+          label: "Errors",
+          data: this.seriesData.errSeriesData,
+          backgroundColor: peermetrics.colors.error,
+        },
+        {
+          label: "Ongoing",
+          data: this.seriesData.ongSeriesData,
+          backgroundColor: peermetrics.colors.info,
         },
       ];
     },
