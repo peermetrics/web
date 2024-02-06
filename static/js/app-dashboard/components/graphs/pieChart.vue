@@ -30,6 +30,10 @@ export default {
       type: String,
       default: () => ''
     },
+    padding: {
+      type: Number,
+      default: () => 50
+    },
   },
   data() {
     return {
@@ -95,7 +99,7 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: 50,
+          padding: this.padding,
         },
         plugins: {
           legend: {
@@ -121,16 +125,22 @@ export default {
             }
           }
         },
-      },
-      chartData: {
+      }
+    }
+  },
+
+  computed: {
+    chartData() {
+      return {
         labels: this.labels,
         datasets: [
           {
-            backgroundColor: ['rgb(124, 181, 236)', 'rgb(67, 67, 72)'],
+            backgroundColor: ['rgb(124, 181, 236)', 'rgb(67, 67, 72)', 'rgb(144, 237, 125)', 'rgb(247, 163, 92)'],
             data: this.datasets
           }
         ]
       }
+
     }
   }
 }

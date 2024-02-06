@@ -1,13 +1,21 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.series.length===0" />
-    <div v-else id="gum-chart"></div>
+    <NoDataMessage v-if="dataSeries.datasets.length===0" />
+    <pie-chart
+        v-else
+        id="gum-chartjs"
+        tooltipTitle="GetUserMedia Errors"
+        :labels="dataSeries.labels"
+        :datasets="dataSeries.datasets"
+        :count="dataSeries.count"
+        :padding="65"
+    />
   </div>
 </template>
 
 <script>
-import createPieChart from "../mixins/createPieChart";
 import NoDataMessage from "../../../components/noDataMessage.vue";
+import PieChart from "./pieChart.vue";
 
 export default {
   name: "gum-chart",
@@ -18,19 +26,9 @@ export default {
     }
   },
   components: {
+    PieChart,
     NoDataMessage
   },
-  data() {
-    return {
-      chartId: "gum-chart",
-      seriesName: "GetUserMedia Errors",
-      pointFormat:
-        '<span style="color:{point.color}">{point.name}</span>: ' +
-        "<b>{point.y:.2f}%</b><br/>Occurrences:<b>{point.count}</b></br>"
-    };
-  },
-  mixins: [createPieChart],
-  mounted() {},
   computed: {
     dataSeries() {
       const numberOfErrors = this.issues.length
@@ -43,26 +41,28 @@ export default {
 
       let gum_warnings = peermetrics.utils.reduce(result);
 
-      let series = [];
+      let datasets = [];
+      let labels = [];
+      let count = [];
+
       for (let key of Object.keys(gum_warnings)) {
-        series.push({
-          name: titles[key],
-          y: (gum_warnings[key] / numberOfErrors) * 100,
-          count: gum_warnings[key]
-        });
+        labels.push(key)
+        count.push(gum_warnings[key])
+        datasets.push((gum_warnings[key] / numberOfErrors) * 100)
       }
 
       return {
-        series,
-        drilldown: null
+        labels,
+        datasets,
+        count
       };
     },
-  },
-
-  watch: {
-    issues(val, prev) {
-      this.dataWatcher(val, prev)
-    }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+#gum-chartjs {
+  background-color: white;
+}
+</style>

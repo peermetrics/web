@@ -1,5 +1,6 @@
 <template>
   <Bar
+      ref="bar"
       :id="$attrs.id"
       :options="chartOptions"
       :data="chartData"
@@ -22,6 +23,10 @@ export default {
       type: String,
       default: ''
     },
+    xTitle: {
+      type: String,
+      default: ''
+    },
     labels: {
       type: Array,
       default: () => []
@@ -29,15 +34,28 @@ export default {
     datasets: {
       type: Array,
       default: () => []
+    },
+    horizontal: {
+      type: Boolean,
+      default: () => false
+    },
+    xGrid: {
+      type: Boolean,
+      default: () => false
+    },
+    yGrid: {
+      type: Boolean,
+      default: () => false
+    },
+    datalabels: {
+      type: Boolean,
+      default: () => true
     }
   },
   data() {
     return {
-      chartData: {
-        labels: this.labels,
-        datasets: this.datasets
-      },
       chartOptions: {
+        indexAxis: this.horizontal ? 'y' : 'x',
         responsive: true,
         plugins: {
           legend: {
@@ -45,8 +63,8 @@ export default {
           },
           datalabels: {
             color: 'black',
-            display: function(context) {
-              return context.dataset.data[context.dataIndex] > 0;
+            display: (context) => {
+              return this.datalabels && context.dataset.data[context.dataIndex] > 0;
             },
             font: {
               weight: 'bold'
@@ -56,16 +74,23 @@ export default {
         scales: {
           x: {
             stacked: true,
+            title: {
+              display: this.xTitle.length,
+              text: this.xTitle,
+            },
             grid: {
-              display: false,
+              display: this.yGrid,
             }
           },
           y: {
             stacked: true,
             suggestedMax: Math.ceil(Math.max(...this.datasets.flatMap(obj => obj.data)) / 10) * 10,
             title: {
-              display: true,
+              display: this.yTitle.length,
               text: this.yTitle,
+            },
+            grid: {
+              display: this.xGrid,
             }
           }
         },
@@ -92,6 +117,15 @@ export default {
         }
       }
     }
+  },
+
+  computed: {
+    chartData() {
+      return {
+        labels: this.labels,
+        datasets: this.datasets
+      }
+    },
   }
 }
 </script>

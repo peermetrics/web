@@ -6,8 +6,9 @@
         id="call-setup-time-chartjs"
         :labels="categories"
         :datasets="series"
-        yTitle="No. of conferences"
+        yTitle="No. of connections"
         @chart-click="onChartClick"
+        x-grid
     />
 
     <conference-list-modal
@@ -180,12 +181,6 @@ export default {
       });
 
       this.$refs["conferencesModal"].show();
-    }
-  },
-
-  watch: {
-    connections(val, prev) {
-      // Question: how to trigger this watcher
     }
   }
 };

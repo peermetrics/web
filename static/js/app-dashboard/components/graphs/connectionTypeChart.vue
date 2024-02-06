@@ -70,12 +70,6 @@ export default {
         count: [grouping['direct'], grouping['relayed']]
       }
     }
-  },
-
-  watch: {
-    connections(val, prev) {
-      // TODO: trigger and test it
-    }
   }
 };
 </script>

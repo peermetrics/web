@@ -1,12 +1,14 @@
 <template>
   <div class="chart">
     <NoDataMessage v-if="!dataSeries || dataSeries.citySeries.length === 0 " />
-    <div v-else id="map-chart"></div>
+<!--    <div v-else id="map-chart"></div>-->
+    <bubble-map-chart />
   </div>
 </template>
 
 <script>
 import NoDataMessage from "./noDataMessage.vue";
+import BubbleMapChart from "../app-dashboard/components/graphs/bubbleMapChart.vue";
 
 export default {
   name: "map-chart",
@@ -17,10 +19,11 @@ export default {
     }
   },
   components: {
-    NoDataMessage
+    NoDataMessage,
+    BubbleMapChart
   },
   mounted() {
-    this.createMapChart();
+    // this.createMapChart();
   },
   data() {
     return {

@@ -8,6 +8,7 @@
         :datasets="series"
         yTitle="No. of conferences"
         @chart-click="onChartClick"
+        x-grid
     />
 
     <conference-list-modal
@@ -179,12 +180,6 @@ export default {
 
       this.modalConferences = this.groupedConferences?.[seriesNameToKey]?.[e.xValue] ?? [];
       this.$refs["conferencesModal"].show();
-    }
-  },
-
-  watch: {
-    conferences(val, prev) {
-      // Question: how to trigger this watcher
     }
   }
 };

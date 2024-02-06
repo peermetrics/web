@@ -53,12 +53,6 @@ export default {
         count
       };
     }
-  },
-
-  watch: {
-    conferences(val, prev) {
-      // TODO: trigger and test it
-    }
   }
 };
 </script>
