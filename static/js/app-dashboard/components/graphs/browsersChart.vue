@@ -1,13 +1,20 @@
 <template>
   <div class="chart">
     <NoDataMessage v-if="dataSeries.series.length===0" />
-    <div v-else id="browsers-chart"></div>
+    <pie-chart
+        v-else
+        id="browsers-chartjs"
+        tooltipTitle="Browsers"
+        :datasets="dataSeries.series"
+        :drilldown="dataSeries.drilldown"
+        :padding-top="60"
+    />
   </div>
 </template>
 
 <script>
-import createPieChart from "../mixins/createPieChart";
 import NoDataMessage from "../../../components/noDataMessage.vue";
+import PieChart from "./pieChart.vue";
 
 export default {
   name: "browsers-chart",
@@ -18,18 +25,9 @@ export default {
     }
   },
   components: {
+    PieChart,
     NoDataMessage
   },
-  data() {
-    return {
-      chartId: "browsers-chart",
-      seriesName: "Browsers",
-      subtitleText: "Click the slices to view versions",
-      pointFormat:
-        '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b><br/>'
-    };
-  },
-  mixins: [createPieChart],
   mounted() {},
   computed: {
     dataSeries() {
@@ -93,3 +91,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+#browsers-chartjs {
+  background-color: white;
+}
+</style>

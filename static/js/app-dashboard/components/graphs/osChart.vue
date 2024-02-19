@@ -1,13 +1,20 @@
 <template>
   <div class="chart">
     <NoDataMessage v-if="dataSeries.series.length===0" />
-    <div v-else id="os-chart"></div>
+    <pie-chart
+        v-else
+        id="os-chart-chartjs"
+        tooltipTitle="OS"
+        :datasets="dataSeries.series"
+        :drilldown="dataSeries.drilldown"
+        :padding-top="60"
+    />
   </div>
 </template>
 
 <script>
-import createPieChart from "../mixins/createPieChart";
 import NoDataMessage from "../../../components/noDataMessage.vue";
+import PieChart from "./pieChart.vue";
 
 export default {
   name: "os-chart",
@@ -18,19 +25,9 @@ export default {
     }
   },
   components: {
+    PieChart,
     NoDataMessage
   },
-  data() {
-    return {
-      chartId: "os-chart",
-      chartType: "pie",
-      seriesName: "OS",
-      subtitleText: "Click the slices to view versions",
-      pointFormat:
-        '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b><br/>'
-    };
-  },
-  mixins: [createPieChart],
   mounted() {},
   computed: {
     dataSeries() {
@@ -94,4 +91,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+#os-chart-chartjs {
+  background-color: white;
+}
+</style>
 

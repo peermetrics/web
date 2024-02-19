@@ -1,13 +1,11 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.datasets.length===0" />
+    <NoDataMessage v-if="dataSeries.length===0" />
     <pie-chart
         v-else
         id="gum-chartjs"
         tooltipTitle="GetUserMedia Errors"
-        :labels="dataSeries.labels"
-        :datasets="dataSeries.datasets"
-        :count="dataSeries.count"
+        :datasets="dataSeries"
         :padding="65"
     />
   </div>
@@ -41,21 +39,17 @@ export default {
 
       let gum_warnings = peermetrics.utils.reduce(result);
 
-      let datasets = [];
-      let labels = [];
-      let count = [];
+      let series = [];
 
       for (let key of Object.keys(gum_warnings)) {
-        labels.push(key)
-        count.push(gum_warnings[key])
-        datasets.push((gum_warnings[key] / numberOfErrors) * 100)
+        series.push({
+          name: titles[key],
+          y: (gum_warnings[key] / numberOfErrors) * 100,
+          count: gum_warnings[key]
+        });
       }
 
-      return {
-        labels,
-        datasets,
-        count
-      };
+      return series;
     },
   }
 };

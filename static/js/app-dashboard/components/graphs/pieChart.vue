@@ -1,10 +1,18 @@
 <template>
-  <Pie :data="chartData" :options="chartOptions" :plugins="[pieLabelsLine]"/>
+  <div class="chartjs-wrapper">
+    <Pie :data="chartData" :options="chartOptions" :plugins="[pieLabelsLine]"/>
+    <div v-if="Object.keys(drilldown).length" class="pie-header">
+      <span class="hint">Click the slices to view versions</span>
+    </div>
+    <div v-if="selectedDrilldownName" class="pie-breadcrumbs">
+      <span class="drilldown-link" @click="goBack">{{ tooltipTitle }}</span> / {{ selectedDrilldownName }}
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-import { Pie } from 'vue-chartjs'
+import { getElementAtEvent, Pie } from 'vue-chartjs'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -22,7 +30,7 @@ export default {
       type: Array,
       default: () => []
     },
-    count: {
+    drilldown: {
       type: Array,
       default: () => []
     },
@@ -34,9 +42,27 @@ export default {
       type: Number,
       default: () => 50
     },
+    paddingTop: {
+      type: Number,
+      default: () => undefined
+    },
+    paddingRight: {
+      type: Number,
+      default: () => undefined
+    },
+    paddingBottom: {
+      type: Number,
+      default: () => undefined
+    },
+    paddingLeft: {
+      type: Number,
+      default: () => undefined
+    },
   },
   data() {
     return {
+      selectedDrilldownName: '',
+      drilldownChartData: {},
       pieLabelsLine: {
         id: "pieLabelsLine",
         afterDraw(chart) {
@@ -99,7 +125,12 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: this.padding,
+          padding: {
+            top: this.paddingTop ?? this.padding,
+            right: this.paddingRight ?? this.padding,
+            bottom: this.paddingBottom ?? this.padding,
+            left: this.paddingLeft ?? this.padding,
+          },
         },
         plugins: {
           legend: {
@@ -114,34 +145,120 @@ export default {
           tooltip: {
             callbacks: {
               title: () => {
+                if (this.selectedDrilldownName) {
+                  return this.selectedDrilldownName
+                }
+
                 return this.tooltipTitle || '';
               },
               label: function(context) {
                 return `${context.label}: ${context.formattedValue}%` || '';
               },
               afterLabel: (context) => {
-                return `Count: ${this.count[context.dataIndex]}` || '';
+                if (!this.datasets?.[0].count) {
+                  return null
+                }
+
+                return `Count: ${this.datasets?.[context.dataIndex].count}` || '';
               }
             }
           }
         },
+        onHover: (event, chartElement) => {
+          const isActive = this.drilldown.length && chartElement[0] && !this.selectedDrilldownName;
+          event.native.target.style.cursor = isActive ? 'pointer' : 'default';
+        },
+        onClick: (e) => {
+          if (!this.drilldown.length || Object.keys(this.drilldownChartData).length) {
+            return;
+          }
+
+          const el = getElementAtEvent(e.chart, e.native)[0]
+
+          if (!el) {
+            return
+          }
+
+          const dataset = this.datasets[el.index]
+          this.selectedDrilldownName = dataset.name
+
+          const drillDownData = this.drilldown.find(d => d.name === dataset.name);
+
+          this.drilldownChartData = {
+            labels: drillDownData.data.map(d => d[0]),
+            datasets: [
+              {
+                backgroundColor: ['rgb(124, 181, 236)', 'rgb(67, 67, 72)', 'rgb(144, 237, 125)', 'rgb(247, 163, 92)'],
+                data: drillDownData.data.map(d => d[1])
+              }
+            ]
+          }
+        }
       }
     }
   },
 
   computed: {
     chartData() {
+      if (Object.keys(this.drilldownChartData).length) {
+        return this.drilldownChartData
+      }
+
       return {
-        labels: this.labels,
+        labels: this.datasets.map(s => s.name),
         datasets: [
           {
             backgroundColor: ['rgb(124, 181, 236)', 'rgb(67, 67, 72)', 'rgb(144, 237, 125)', 'rgb(247, 163, 92)'],
-            data: this.datasets
+            data: this.datasets.map(d => d.y)
           }
         ]
       }
+    }
+  },
 
+  methods: {
+    goBack() {
+      this.drilldownChartData = {}
+      this.selectedDrilldownName = ''
     }
   }
 }
 </script>
+
+<style scoped>
+.chartjs-wrapper {
+  position: relative;
+}
+
+.pie-header {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 6px;
+
+  .hint {
+    font-size: 12px;
+    color: rgb(102, 102, 102)
+  }
+}
+
+.pie-breadcrumbs {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+  position: absolute;
+  top: 0;
+  padding-top: 2rem;
+  padding-left: 1rem;
+  font-size: 12px;
+}
+
+.drilldown-link {
+  color: blue;
+  cursor: pointer;
+  padding: 4px 2px;
+}
+
+.drilldown-link:hover {
+  background: rgb(230,230,230);
+}
+</style>

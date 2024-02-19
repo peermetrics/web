@@ -29,10 +29,10 @@ export default {
       this.usStates = us
       this.mapData = data
 
-      console.log('here', [us, data])
-      console.log('vas', document.getElementById("canvas"))
+      // console.log('here', [us, data])
+      // console.log('vas', document.getElementById("canvas"))
 
-      const chart = new ChartJS(document.getElementById("canvas").getContext("2d"), {
+      new ChartJS(document.getElementById("canvas").getContext("2d"), {
         type: 'bubbleMap',
         data: {
           labels: this.mapData.map((d) => d.description),
@@ -83,7 +83,7 @@ export default {
         }
       });
 
-      console.log('chart', chart)
+      // console.log('chart', chart)
     });
   }
 }

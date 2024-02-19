@@ -1,13 +1,11 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.datasets.length===0" />
+    <NoDataMessage v-if="dataSeries.length===0" />
     <pie-chart
         v-else
         id="type-of-connection-chartjs"
         tooltipTitle="Connection Types"
-        :labels="dataSeries.labels"
-        :datasets="dataSeries.datasets"
-        :count="dataSeries.count"
+        :datasets="dataSeries"
     />
   </div>
 </template>
@@ -61,14 +59,18 @@ export default {
 
       let series = []
       if (connectionsCount) {
-        series.push((grouping['direct'] / connectionsCount) * 100, (grouping['relayed'] / connectionsCount) * 100)
+        series.push({
+          name: 'Direct',
+          y: (grouping['direct'] / connectionsCount) * 100,
+          count: grouping['direct']
+        }, {
+          name: 'Relayed',
+          y: (grouping['relayed'] / connectionsCount) * 100,
+          count: grouping['relayed']
+        })
       }
 
-      return {
-        labels: ['Direct', 'Relayed'],
-        datasets: series,
-        count: [grouping['direct'], grouping['relayed']]
-      }
+      return series
     }
   }
 };

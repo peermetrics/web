@@ -1,13 +1,11 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.datasets.length===0" />
+    <NoDataMessage v-if="dataSeries.length===0" />
     <pie-chart
         v-else
         id="number-of-participants-chartjs"
         tooltipTitle="Number of participants"
-        :labels="dataSeries.labels"
-        :datasets="dataSeries.datasets"
-        :count="dataSeries.count"
+        :datasets="dataSeries"
     />
   </div>
 </template>
@@ -37,21 +35,17 @@ export default {
       });
       let participants = peermetrics.utils.reduce(arr);
       let conferencesCount = this.conferences.length;
-      let datasets = [];
-      let labels = [];
-      let count = [];
+      let series = [];
 
       for (let key of Object.keys(participants)) {
-        labels.push(key)
-        count.push(participants[key])
-        datasets.push((participants[key] / conferencesCount) * 100)
+        series.push({
+          name: key,
+          y: (participants[key] / conferencesCount) * 100,
+          count: participants[key]
+        });
       }
 
-      return {
-        labels,
-        datasets,
-        count
-      };
+      return series;
     }
   }
 };
