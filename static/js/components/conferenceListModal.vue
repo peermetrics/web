@@ -18,7 +18,7 @@
             :href="createPath(conference)"
             class="list-group-item list-group-item-action d-flex"
           >
-            <div>
+            <div class="conference-name">
               <span v-if="hasName(conference)"
                 >{{ conference.conference_name }},</span
               >
@@ -60,3 +60,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+  .conference-name {
+    flex: 1;
+  }
+</style>
