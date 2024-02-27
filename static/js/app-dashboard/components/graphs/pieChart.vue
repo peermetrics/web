@@ -188,7 +188,7 @@ export default {
             labels: drillDownData.data.map(d => d[0]),
             datasets: [
               {
-                backgroundColor: ['rgb(124, 181, 236)', 'rgb(67, 67, 72)', 'rgb(144, 237, 125)', 'rgb(247, 163, 92)'],
+                backgroundColor: peermetrics.colors.list,
                 data: drillDownData.data.map(d => d[1])
               }
             ]
@@ -208,7 +208,7 @@ export default {
         labels: this.datasets.map(s => s.name),
         datasets: [
           {
-            backgroundColor: ['rgb(124, 181, 236)', 'rgb(67, 67, 72)', 'rgb(144, 237, 125)', 'rgb(247, 163, 92)'],
+            backgroundColor: peermetrics.colors.list,
             data: this.datasets.map(d => d.y)
           }
         ]
