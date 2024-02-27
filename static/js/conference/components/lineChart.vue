@@ -2,7 +2,7 @@
   <div>
     <h3>{{ title }}</h3>
     <div class="chart-wrapper" v-if="data.length > 0">
-      <div :id="`lineChart-${id}`" class="chart lineChart"></div>
+      <LineChart :data="chartData" class="chart lineChart" :options="options" />
     </div>
     <div class="container" v-else>
       <div class="row justify-content-center">
@@ -17,108 +17,112 @@
     </div>
   </div>
 </template>
-<script>
+
+<script lang="ts">
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
+import { Line as LineChart } from 'vue-chartjs'
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+)
+
 export default {
-  name: "HighChart",
+  name: 'App',
+  components: {
+    LineChart
+  },
   props: {
     title: {
       type: String,
       required: true,
     },
-    yAxis: {
-      type: String,
-      default: "",
-    },
-    hideTooltip: {
-      type: Boolean,
-      default: false,
-    },
-    customTooltip: {
-      type: Function,
-      default: () => false,
-    },
     data: {
+      type: Array,
       required: true,
-      validator: (value) => {
-        return Array.isArray(value) || peermetrics.utils.isNull(value);
-      },
     },
-  },
-  mounted() {
-    this.id = this._uid;
-
-    // Wait to add div with id "minutes-per-day-chart" in DOM and after Highchart will render the chart
-    setTimeout(() => {
-      this.createChart();
-    }, 0);
+    padding: {
+      type: Number,
+      default: () => 20
+    },
   },
   data() {
     return {
-      id: null,
-    };
-  },
-  methods: {
-    createChart() {
-      if (this.data.length > 0) {
-        // create a new chart only if data exist
-        const that = this;
-        Highcharts.chart(`lineChart-${this.id}`, {
-          credits: false,
 
-          chart: {
-            type: "line",
-          },
-
-          title: {
-            text: null,
-          },
-
-          yAxis: {
-            title: {
-              text: this.yAxis,
-            },
-          },
-
-          xAxis: {
-            type: "datetime",
-          },
-
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
           legend: {
-            // layout: 'horizontal',
-            align: "center",
-            verticalAlign: "bottom",
+            position: 'bottom',
           },
-
-          series: this.data,
-
-          tooltip: {
-            enabled: !this.hideTooltip,
-            formatter: function () {
-              const time = Highcharts.dateFormat("%I:%M:%S %p", this.x);
-              const seriesName = this.series.name;
-              const color = this.point.color;
-              const value = this.y;
-
-              const html = !that.customTooltip()
-                ? `<small>${time}</small><br/><p><span style="color:${color};">● </span> ${seriesName}: ${value}</p>`
-                : that.customTooltip({ time, color, seriesName, value });
-              return html;
-            },
+        },
+        layout: {
+          padding: {
+            top: this.paddingTop ?? this.padding,
+            right: this.paddingRight ?? this.padding,
+            bottom: this.paddingBottom ?? this.padding,
+            left: this.paddingLeft ?? this.padding,
           },
-
-          plotOptions: {
-            series: {
-              animation: false,
-            },
+        },
+        scales: {
+          x: {
+            stacked: true,
+            grid: {
+              display: false,
+            }
           },
-        });
+        }
       }
-    },
+    }
   },
-};
+  computed: {
+    chartData() {
+      const colors = [
+        {
+          backgroundColor: 'rgb(124, 181, 236)',
+          borderColor: 'rgb(124, 181, 236)',
+        },
+        {
+          backgroundColor: 'rgb(51, 51, 51)',
+          borderColor: 'rgb(51, 51, 51)',
+        }
+      ]
+      return {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: this.data.map((d, index) => {
+          return {
+            backgroundColor: colors[index]?.backgroundColor,
+            borderColor: colors[index]?.backgroundColor,
+            label: d.name,
+            ...d
+          }
+        })
+      }
+    }
+  },
+  mounted() {
+    console.log(this.data)
+  }
+}
 </script>
-<style>
-.chart > div {
-  flex: auto !important;
+
+<style scoped>
+.chart-wrapper {
+  background-color: white;
 }
 </style>
