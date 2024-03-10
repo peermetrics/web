@@ -17,7 +17,6 @@ export default defineConfig({
           'wretch': 'wretch',
           'vue': 'Vue',
           'chart.js': 'Chart',
-          // 'vue-chartjs': 'vue-chartjs'
         },
         entryFileNames: `index.js`,
         format: 'iife',
