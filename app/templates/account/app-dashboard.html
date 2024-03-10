@@ -6,28 +6,12 @@
 
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
 
-  {% if DEV %}
-    <script src="/static/node_modules/vue/dist/vue.runtime.js"></script>
-    <script src="/static/node_modules/highcharts/highcharts.js"></script>
-
-    <script src="/static/node_modules/highcharts/modules/drilldown.js"></script>
-    <script src="/static/node_modules/highcharts/modules/accessibility.js"></script>
-
-    <script src="/static/node_modules/highcharts/modules/debugger.js"></script>
-  {% else %}
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue-chartjs@5.3.0/dist/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-geo@4.2.8/build/index.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-chartjs@5.3.0/dist/index.min.js" type="module"></script>
 
-    <script src="https://code.highcharts.com/highcharts.src.js"></script>
-    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-  {% endif %}
-
+    {# <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script> #}
 {% endblock %}
 
 {% block container %}
@@ -50,7 +34,6 @@
     peermetrics.daysHistory = {{ data_retention_days }}
   </script>
 
-<!--  <script src="/static/js/demo/app-dashboard.js"></script>-->
   <script src="/static/js/app-dashboard/index.js"></script>
 
 {% endblock %}

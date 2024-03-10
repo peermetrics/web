@@ -11,18 +11,19 @@ export default defineConfig({
     outDir: `static/js/${target}`,
     emptyOutDir: false,
     rollupOptions: {
-      external: ['vue', 'Highcharts', 'wretch'],
+      external: ['wretch', 'vue', 'chart.js'],
       output: {
         globals: {
-          wretch: 'wretch',
-          vue: 'Vue',
-          highcharts: 'Highcharts'
+          'wretch': 'wretch',
+          'vue': 'Vue',
+          'chart.js': 'Chart',
+          // 'vue-chartjs': 'vue-chartjs'
         },
         entryFileNames: `index.js`,
         format: 'iife',
-        sourcemap: !isProd
       },
       input: `static/js/${target}/index.vue`,
-    }
+    },
+    sourcemap: !isProd
   }
 });
