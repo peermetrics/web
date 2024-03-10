@@ -27,13 +27,13 @@
     <LineChart
       title="Media throughput"
       :data="graphData('mediaThroughput')"
-      :customTooltip="toolTipMediaThroughput"
+      :customTooltip="toolTipMediaThroughput()"
       class="mt-4"
     />
     <LineChart
       title="Round trip time"
       :data="graphData('rtt')"
-      yAxis="ms"
+      yTitle="ms"
       class="mt-4"
     />
     <LineChart
@@ -41,10 +41,10 @@
       :data="graphData('packetLoss')"
       class="mt-4"
     />
-    <LineChart 
+    <LineChart
       title="Jitter"
       :data="graphData('jitter')"
-      class="mt-4" 
+      class="mt-4"
     />
   </div>
 </template>
@@ -168,11 +168,16 @@ export default {
       this.graphKey++;
     },
 
-    toolTipMediaThroughput(options = {}) {
-      const { time, color, seriesName, value } = options;
-      return `<small>${time}</small><br/><p><span style="color:${color};">● </span> ${seriesName}: ${peermetrics.utils.formatBytes(
-        value
-      )}</p>`;
+    toolTipMediaThroughput() {
+      return {
+        callbacks: {
+          label: (context) => {
+            return `${context.dataset.label}: ${peermetrics.utils.formatBytes(
+                parseFloat(context.formattedValue.replace(/,/g, ''))
+            )}`;
+          },
+        }
+      }
     },
 
     toolTipAverage(options = {}) {

@@ -37,7 +37,7 @@ export default {
     },
     selectedItemLabel: {
       required: true,
-      type: String,
+      type: String | null,
     },
     items: {
       required: true,
