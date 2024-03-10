@@ -97,13 +97,18 @@ export default {
             type: 'time',
             time: {
               unit: 'second',
-              tooltipFormat: "hh:mm:ss A",
-              displayFormats: {
-                "second": "hh:mm:ss"
+              tooltipFormat: "hh:mm:ss A"
+            },
+            adapters: {
+              date: {
+                zone: 'UTC+6'
               }
             },
             ticks: {
-              stepSize: 10
+              stepSize: 10,
+              callback: (label) => {
+                return moment.utc(label).format('hh:mm:ss');
+              }
             },
             grid: {
               display: false,
