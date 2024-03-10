@@ -21,18 +21,19 @@
 <script lang="ts">
 import {
   Chart as ChartJS,
-  CategoryScale,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
+  TimeScale,
   Title,
-  Tooltip,
-  Legend
+  Tooltip
 } from 'chart.js'
-import { Line as LineChart } from 'vue-chartjs'
+import {Line as LineChart} from 'vue-chartjs'
+import 'chartjs-adapter-moment';
 
 ChartJS.register(
-    CategoryScale,
+    TimeScale,
     LinearScale,
     PointElement,
     LineElement,
@@ -59,10 +60,17 @@ export default {
       type: Number,
       default: () => 20
     },
+    yTitle: {
+      type: String,
+      default: ''
+    },
+    customTooltip: {
+      type: Object,
+      default: () => {}
+    },
   },
   data() {
     return {
-
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -70,6 +78,10 @@ export default {
           legend: {
             position: 'bottom',
           },
+          datalabels: {
+            display: false
+          },
+          tooltip: this.customTooltip
         },
         layout: {
           padding: {
@@ -82,10 +94,36 @@ export default {
         scales: {
           x: {
             stacked: true,
+            type: 'time',
+            time: {
+              unit: 'second',
+              tooltipFormat: "hh:mm:ss A",
+              displayFormats: {
+                "second": "hh:mm:ss"
+              }
+            },
+            ticks: {
+              stepSize: 10
+            },
             grid: {
               display: false,
             }
           },
+          y: {
+            ticks: {
+              callback: function (value) {
+                if (value >= 1000) {
+                  return value / 1000 + "k";
+                } else {
+                  return value;
+                }
+              },
+            },
+            title: {
+              display: this.yTitle.length,
+              text: this.yTitle,
+            },
+          }
         }
       }
     }
@@ -103,7 +141,6 @@ export default {
         }
       ]
       return {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: this.data.map((d, index) => {
           return {
             backgroundColor: colors[index]?.backgroundColor,
@@ -114,9 +151,6 @@ export default {
         })
       }
     }
-  },
-  mounted() {
-    console.log(this.data)
   }
 }
 </script>
