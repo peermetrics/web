@@ -1,0 +1,20 @@
+{
+  "participants": [
+    "05305cf9-f017-472d-b5d8-82d21ad675ca",
+    "6cf7066e-e781-40d2-83ae-0590063921c7"
+  ],
+  "issues": [
+    "f5bb278f-31e9-4a91-b13c-526c30d82e08"
+  ],
+  "id": "0e49b9a6-d4a0-482d-9fff-73b28fd1337d",
+  "conference_id": "demo-conference",
+  "conference_name": "Demo conference",
+  "conference_info": {},
+  "app": "02a8e255-6760-4e1a-8a82-6ec030d5b2a8",
+  "start_time": "2022-04-19 16:59:37.735167",
+  "call_start": null,
+  "end_time": "2022-04-19 17:01:36.941077",
+  "ongoing": false,
+  "duration": 115,
+  "created_at": "2022-04-19 16:59:17.401088"
+}

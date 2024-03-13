@@ -12,7 +12,7 @@
     "watch-participant": "cross-env BUILD_TARGET=participant vite build --watch --sourcemap",
     "watch-conference": "cross-env BUILD_TARGET=conference vite build --watch --sourcemap",
     "watch-dashboard": "cross-env BUILD_TARGET=app-dashboard vite build --watch --sourcemap",
-    "watch": "npm-run-all --parallel watch-participant watch-conference watch-dashboard",
+    "watch": "npm-run-all watch-participant watch-conference watch-dashboard",
     "css": "sass static/css/main.scss static/css/main.css --style compressed --no-source-map --quiet",
     "css-watch": "sass --watch static/css/main.scss static/css/main.css --style compressed --no-source-map",
     "test": "echo \"Error: no test specified\" && exit 1"

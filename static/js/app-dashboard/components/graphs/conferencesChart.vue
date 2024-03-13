@@ -23,7 +23,7 @@ import NoDataMessage from "../../../components/noDataMessage.vue";
 import ConferenceListModal from "../../../components/conferenceListModal.vue";
 
 import conferencesFunctions from "../../../mixins/conferences";
-import BarChart from "./barChart.vue";
+import BarChart from "../../../components/barChart.vue";
 
 export default {
   name: "conferences-chart",

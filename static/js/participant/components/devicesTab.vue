@@ -27,13 +27,13 @@
         <h3 class="mb-2">
           Operating systems
         </h3>
-        <div id="os-chart" class="pie-chart"></div>
+        <o-s-chart :sessions="sessions" />
       </div>
       <div class="col">
         <h3 class="mb-2">
           Browsers
         </h3>
-        <div id="browser-chart" class="pie-chart"></div>
+        <browsers-chart :sessions="sessions" />
       </div>
     </div>
 
@@ -52,6 +52,9 @@
 <script>
 import { BCardGroup, BCard } from "bootstrap-vue";
 
+import OSChart from "../../components/osChart.vue";
+import BrowsersChart from "../../components/browsersChart.vue";
+
 import MapChart from "../../components/mapChart.vue";
 import Loader from "../../components/loader.vue";
 
@@ -62,7 +65,9 @@ export default {
     BCardGroup,
     BCard,
     MapChart,
-    Loader
+    Loader,
+    BrowsersChart,
+    OSChart,
   },
 
   props: {
@@ -85,11 +90,6 @@ export default {
   },
 
   watch: {
-    sessions() {
-      this.createOSChart();
-      this.createBrowserChart();
-    },
-
     // we need to wait for the tab to become visible before we instantiate <map-chart>
     // leaflet does not like when base elements are hidden
     displayed(val) {
@@ -223,86 +223,6 @@ export default {
   },
 
   methods: {
-    createOSChart() {
-      const {series, drilldown} = this.operatingSystems
-
-      Highcharts.chart("os-chart", {
-        credits: false,
-        chart: {
-          type: "pie"
-        },
-        title: {
-          text: ""
-        },
-        subtitle: {
-          text: "Click the slices to view versions"
-        },
-        plotOptions: {
-          series: {
-            dataLabels: {
-              enabled: true,
-              format: "{point.name}: {point.y:.1f}%"
-            }
-          }
-        },
-        tooltip: {
-          headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-          pointFormat:
-            '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b><br/>'
-        },
-        series: [
-          {
-            name: "OS",
-            colorByPoint: true,
-            data: series
-          }
-        ],
-        drilldown: {
-          series: drilldown
-        }
-      });
-    },
-
-    createBrowserChart() {
-      const {series, drilldown} = this.browsers
-
-      Highcharts.chart("browser-chart", {
-        credits: false,
-        chart: {
-          type: "pie"
-        },
-        title: {
-          text: ""
-        },
-        subtitle: {
-          text: "Click the slices to view versions"
-        },
-        plotOptions: {
-          series: {
-            dataLabels: {
-              enabled: true,
-              format: "{point.name}: {point.y:.1f}%"
-            }
-          }
-        },
-        tooltip: {
-          headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-          pointFormat:
-            '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b><br/>'
-        },
-        series: [
-          {
-            name: "Browser",
-            colorByPoint: true,
-            data: series
-          }
-        ],
-        drilldown: {
-          series: drilldown
-        }
-      });
-    },
-
     createDevicesList(data = [], kind) {
       const filteredDevices = data.reduce((acc, item) => {
         // filter just the device kind that we care, and add it to filteredDevices

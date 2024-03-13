@@ -1,0 +1,340 @@
+[
+  {
+    "issues": [],
+    "id": "06d0c0b2-3547-4aa2-bb05-c2ab7f9b34be",
+    "conference": "0e49b9a6-d4a0-482d-9fff-73b28fd1337d",
+    "participant": "05305cf9-f017-472d-b5d8-82d21ad675ca",
+    "constraints": {
+      "iso": true,
+      "pan": true,
+      "tilt": true,
+      "zoom": true,
+      "torch": true,
+      "width": true,
+      "height": true,
+      "groupId": true,
+      "latency": true,
+      "contrast": true,
+      "deviceId": true,
+      "focusMode": true,
+      "frameRate": true,
+      "sharpness": true,
+      "brightness": true,
+      "facingMode": true,
+      "resizeMode": true,
+      "sampleRate": true,
+      "sampleSize": true,
+      "saturation": true,
+      "aspectRatio": true,
+      "channelCount": true,
+      "exposureMode": true,
+      "exposureTime": true,
+      "focusDistance": true,
+      "autoGainControl": true,
+      "colorTemperature": true,
+      "echoCancellation": true,
+      "noiseSuppression": true,
+      "pointsOfInterest": true,
+      "whiteBalanceMode": true,
+      "exposureCompensation": true
+    },
+    "devices": [
+      {
+        "kind": "audioinput",
+        "label": "Default",
+        "groupId": "2a85656ec19b5bb16cb49231ebfc4f02a7a10a2aa23d063d2f5abb6d2dbe0089",
+        "deviceId": "default"
+      },
+      {
+        "kind": "audioinput",
+        "label": "Built-in Audio Analog Stereo",
+        "groupId": "12f5d44f66e09b39fafb5ee6f645e005403648f4946afedfc1e2fc423e2c67f9",
+        "deviceId": "35d7380eee9ca65f3a26b7cce0a5af04e151359515caf7d67fc5cb94d3902021"
+      },
+      {
+        "kind": "videoinput",
+        "label": "Integrated Webcam (0bda:565c)",
+        "groupId": "63883cc4fe3342c6987ce48cacd395899fb393bb4e1b217453481198591f7323",
+        "deviceId": "d32aae61ed7e25d226836ddadbe58824a7f5184a90f7928335a7f9f72417afde"
+      },
+      {
+        "kind": "audiooutput",
+        "label": "Default",
+        "groupId": "default",
+        "deviceId": "default"
+      },
+      {
+        "kind": "audiooutput",
+        "label": "Built-in Audio Analog Stereo",
+        "groupId": "12f5d44f66e09b39fafb5ee6f645e005403648f4946afedfc1e2fc423e2c67f9",
+        "deviceId": "0959f2337287053a29273e783003d45464d8560f35bf61848746534639c43f70"
+      }
+    ],
+    "platform": {
+      "os": {
+        "name": "Linux",
+        "version": "x86_64"
+      },
+      "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36",
+      "cpu": {
+        "architecture": "amd64"
+      },
+      "device": {},
+      "engine": {
+        "name": "Blink",
+        "version": "99.0.4844.84"
+      },
+      "browser": {
+        "name": "Chrome",
+        "major": "99",
+        "version": "99.0.4844.84"
+      }
+    },
+    "metadata": null,
+    "geo_ip": {
+      "country_code": "US",
+      "city": "Manhattan",
+      "latitude": "40.7589111328125",
+      "longitude": "-73.97901916503906"
+    },
+    "app_version": "0.0.1",
+    "webrtc_sdk": "",
+    "session_info": {},
+    "duration": 139,
+    "end_time": "2022-04-19 17:01:36.941077",
+    "created_at": "2022-04-19 16:59:17.544053"
+  },
+  {
+    "issues": [
+      "2a3bf763-74a1-45ef-b505-422354d0fc9e",
+      "9d687c21-eb62-4567-8550-f92094d4c692",
+      "55191cc1-90e2-4ae6-9fd6-4853059e72ea",
+      "9c018a3d-a7f8-4a41-b32f-49ddeed35253",
+      "4e71ecfe-63d4-459f-90e9-24be4bd41a24",
+      "3c9ed804-021a-4129-9e43-9a0c702683bb",
+      "d18e5219-c91b-4a17-a9e0-8bbaa0b8eea8",
+      "6a481c7e-3a29-47bc-8864-c9abcae718cf"
+    ],
+    "id": "b70248ae-7b49-451c-b700-aa2bdf6c02f1",
+    "conference": "0e49b9a6-d4a0-482d-9fff-73b28fd1337d",
+    "participant": "6cf7066e-e781-40d2-83ae-0590063921c7",
+    "constraints": {
+      "iso": true,
+      "pan": true,
+      "tilt": true,
+      "zoom": true,
+      "torch": true,
+      "width": true,
+      "height": true,
+      "groupId": true,
+      "latency": true,
+      "contrast": true,
+      "deviceId": true,
+      "focusMode": true,
+      "frameRate": true,
+      "sharpness": true,
+      "brightness": true,
+      "facingMode": true,
+      "resizeMode": true,
+      "sampleRate": true,
+      "sampleSize": true,
+      "saturation": true,
+      "aspectRatio": true,
+      "channelCount": true,
+      "exposureMode": true,
+      "exposureTime": true,
+      "focusDistance": true,
+      "autoGainControl": true,
+      "colorTemperature": true,
+      "echoCancellation": true,
+      "noiseSuppression": true,
+      "pointsOfInterest": true,
+      "whiteBalanceMode": true,
+      "exposureCompensation": true
+    },
+    "devices": [
+      {
+        "kind": "audioinput",
+        "label": "Default",
+        "groupId": "6347f11ba8de4c760882b28cb8a92ecab4a33a8119ea91f989bd3606f8df63c4",
+        "deviceId": "default"
+      },
+      {
+        "kind": "audioinput",
+        "label": "Built-in Audio Analog Stereo",
+        "groupId": "91d579fe04727c5cc2e39f6df9f16ddaf8932da85ac8841c38850452b30f1f58",
+        "deviceId": "df55c84837e267761115b6dddafc0812f7ba4bf21a0705e4fee1b9a6b956628a"
+      },
+      {
+        "kind": "videoinput",
+        "label": "Integrated Webcam (0bda:565c)",
+        "groupId": "ef24d6d0e7dfe02cff119d499681dac5835d210e4a0f2d1f7c74f4ccb809b1f0",
+        "deviceId": "332b4e09e020ce8f5afcd7516d08c1a51f290695f9e49fb5f33989f9074d74c4"
+      },
+      {
+        "kind": "audiooutput",
+        "label": "Default",
+        "groupId": "default",
+        "deviceId": "default"
+      },
+      {
+        "kind": "audiooutput",
+        "label": "Built-in Audio Analog Stereo",
+        "groupId": "91d579fe04727c5cc2e39f6df9f16ddaf8932da85ac8841c38850452b30f1f58",
+        "deviceId": "6b28df43d4772331312c5ffce541012faf87c151565ced2fb682f3277edfe03f"
+      }
+    ],
+    "platform": {
+      "os": {
+        "name": "Linux",
+        "version": "x86_64"
+      },
+      "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36",
+      "cpu": {
+        "architecture": "amd64"
+      },
+      "device": {},
+      "engine": {
+        "name": "Blink",
+        "version": "99.0.4844.84"
+      },
+      "browser": {
+        "name": "Chrome",
+        "major": "99",
+        "version": "99.0.4844.84"
+      }
+    },
+    "metadata": null,
+    "geo_ip": {
+      "country_code": "GB",
+      "city": "City of Westminster",
+      "latitude": "51.50416946411133",
+      "longitude": "-0.17000000178813934"
+    },
+    "app_version": "0.0.1",
+    "webrtc_sdk": null,
+    "session_info": {},
+    "duration": 57,
+    "end_time": "2022-04-19 17:00:31.970033",
+    "created_at": "2022-04-19 16:59:34.169688"
+  },
+  {
+    "issues": [
+      "f5bb278f-31e9-4a91-b13c-526c30d82e08",
+      "e433963c-5815-4e0b-81fa-1a9e15424d77",
+      "6edf02a5-1885-481d-bee5-075f7fac11c4",
+      "34579437-5c05-4e23-9bad-37d5470241f7",
+      "d78bae35-435c-4dfd-b363-0f95487fc991",
+      "1a04a2f1-37a5-4891-a87c-ab5e7896f02a",
+      "8be7af62-7f6d-4f37-9095-0174f07436f1",
+      "df30780d-b683-4461-91ab-59f96880dd1e",
+      "4d970d7b-bbc3-4d51-92b8-98b7cb245c04",
+      "d0e992ed-af6f-442f-9d4f-76fac52ab5ab",
+      "72532f65-2064-43d6-a1f4-b3de7634d6e0",
+      "b362cb26-2483-41b3-9d8b-8755cdc80ffe",
+      "bf36a469-aa0c-4d64-b19a-ea6fc23e362a"
+    ],
+    "id": "4563bf1d-275a-4a19-928d-1e387db295d0",
+    "conference": "0e49b9a6-d4a0-482d-9fff-73b28fd1337d",
+    "participant": "6cf7066e-e781-40d2-83ae-0590063921c7",
+    "constraints": {
+      "iso": true,
+      "pan": true,
+      "tilt": true,
+      "zoom": true,
+      "torch": true,
+      "width": true,
+      "height": true,
+      "groupId": true,
+      "latency": true,
+      "contrast": true,
+      "deviceId": true,
+      "focusMode": true,
+      "frameRate": true,
+      "sharpness": true,
+      "brightness": true,
+      "facingMode": true,
+      "resizeMode": true,
+      "sampleRate": true,
+      "sampleSize": true,
+      "saturation": true,
+      "aspectRatio": true,
+      "channelCount": true,
+      "exposureMode": true,
+      "exposureTime": true,
+      "focusDistance": true,
+      "autoGainControl": true,
+      "colorTemperature": true,
+      "echoCancellation": true,
+      "noiseSuppression": true,
+      "pointsOfInterest": true,
+      "whiteBalanceMode": true,
+      "exposureCompensation": true
+    },
+    "devices": [
+      {
+        "kind": "audioinput",
+        "label": "Default",
+        "groupId": "b9096cd4dd831971499bc9c2fabd3b07298dc0fb8772a60ae8b87fd7fb80f9e0",
+        "deviceId": "default"
+      },
+      {
+        "kind": "audioinput",
+        "label": "Built-in Audio Analog Stereo",
+        "groupId": "7f3596d9a72f5c8fa7f1233bc5105d44b1bae7cb8c0837410d6952c9a065930e",
+        "deviceId": "df55c84837e267761115b6dddafc0812f7ba4bf21a0705e4fee1b9a6b956628a"
+      },
+      {
+        "kind": "videoinput",
+        "label": "Integrated Webcam (0bda:565c)",
+        "groupId": "92c02d0316e188ba675f698854fb460267d98a11fa27abe70251ae1517a02cf5",
+        "deviceId": "332b4e09e020ce8f5afcd7516d08c1a51f290695f9e49fb5f33989f9074d74c4"
+      },
+      {
+        "kind": "audiooutput",
+        "label": "Default",
+        "groupId": "default",
+        "deviceId": "default"
+      },
+      {
+        "kind": "audiooutput",
+        "label": "Built-in Audio Analog Stereo",
+        "groupId": "7f3596d9a72f5c8fa7f1233bc5105d44b1bae7cb8c0837410d6952c9a065930e",
+        "deviceId": "6b28df43d4772331312c5ffce541012faf87c151565ced2fb682f3277edfe03f"
+      }
+    ],
+    "platform": {
+      "os": {
+        "name": "Linux",
+        "version": "x86_64"
+      },
+      "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36",
+      "cpu": {
+        "architecture": "amd64"
+      },
+      "device": {},
+      "engine": {
+        "name": "Blink",
+        "version": "99.0.4844.84"
+      },
+      "browser": {
+        "name": "Chrome",
+        "major": "99",
+        "version": "99.0.4844.84"
+      }
+    },
+    "metadata": null,
+    "geo_ip": {
+      "country_code": "GB",
+      "city": "City of Westminster",
+      "latitude": "51.50416946411133",
+      "longitude": "-0.17000000178813934"
+    },
+    "app_version": "0.0.1",
+    "webrtc_sdk": "",
+    "session_info": {},
+    "duration": 60,
+    "end_time": "2022-04-19 17:01:33.225569",
+    "created_at": "2022-04-19 17:00:33.070162"
+  }
+]

@@ -12,7 +12,7 @@
 
 <script>
 import NoDataMessage from "../../../components/noDataMessage.vue";
-import PieChart from "./pieChart.vue";
+import PieChart from "../../../components/pieChart.vue";
 
 export default {
   name: "participants-chart",

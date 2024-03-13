@@ -21,7 +21,7 @@
 <script>
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import ConferenceListModal from "../../../components/conferenceListModal.vue";
-import BarChart from "./barChart.vue";
+import BarChart from "../../../components/barChart.vue";
 
 export default {
   name: "conference-duration-chart",

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import NoDataMessage from "../../../components/noDataMessage.vue";
+import NoDataMessage from "./noDataMessage.vue";
 import PieChart from "./pieChart.vue";
 
 export default {
@@ -83,12 +83,6 @@ export default {
       };
     }
   },
-
-  watch: {
-    sessions(val, prev) {
-      this.dataWatcher(val, prev)
-    }
-  }
 };
 </script>
 
