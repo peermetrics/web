@@ -9,14 +9,11 @@
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
 
     {% if DEV %}
-        <script src="/static/node_modules/vue/dist/vue.runtime.js"></script>
-        <script src="/static/node_modules/chart.js/dist/chart.umd.js"></script>
+      <script src="/static/node_modules/vue/dist/vue.runtime.js"></script>
+      <script src="/static/node_modules/chart.js/dist/chart.umd.js"></script>
     {% else %}
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
-
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-        {# <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script> #}
+      <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     {% endif %}
 
 {% endblock %}
