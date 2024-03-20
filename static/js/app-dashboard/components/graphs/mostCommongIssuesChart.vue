@@ -1,21 +1,30 @@
 <template>
   <div class="chart">
     <NoDataMessage v-if="seriesData.length===0 " />
-    <div v-else class="row">
-      <div id="most-common-issues" class="col-10"></div>
-    </div>
+
+    <bar-chart
+        v-else
+        id="most-common-issues-chartjs"
+        :labels="categories"
+        :datasets="series"
+        :datalabels="false"
+        xTitle="No. of issues"
+        @chart-click="onChartClick"
+        horizontal
+        y-grid
+    />
 
     <conference-list-modal
-      ref="conferencesModal"
-      :conferences="modalConferences"
+        ref="conferencesModal"
+        :conferences="modalConferences"
     ></conference-list-modal>
   </div>
 </template>
 
 <script>
-import createColumnChart from "../mixins/createColumnChart";
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import ConferenceListModal from "../../../components/conferenceListModal.vue";
+import BarChart from "../../../components/barChart.vue";
 
 export default {
   name: "most-common-issues-chart",
@@ -30,46 +39,16 @@ export default {
     }
   },
   components: {
+    BarChart,
     NoDataMessage,
     ConferenceListModal
   },
-  mixins: [createColumnChart],
   data() {
     return {
-      chartId: "most-common-issues",
-      titleYAxis: "No. of issues",
-      type: 'bar',
       modalConferences: []
     };
   },
   computed: {
-    chartOptions() {
-      return {
-        plotOptions: {
-          column: {
-            pointPadding: 0.2,
-            borderWidth: 0,
-            stacking: "normal",
-          },
-
-          series: {
-            cursor: "pointer",
-            events: {
-              click: (event) => {
-                const conferences = this.conferences.filter((conf) => {
-                  // if we have at least one issue with this code
-                  return conf.issues.some((issue) => issue.code === event.point.issueCode)
-                })
-
-                this.modalConferences = conferences;
-                this.$refs["conferencesModal"].show();
-              },
-            },
-          },
-        },
-      }
-    },
-
     errorCodes() {
       return this.issues.map((issue) => {
         return issue.code
@@ -79,40 +58,49 @@ export default {
       return peermetrics.utils.reduce(this.errorCodes)
     },
     categories() {
+      return this.seriesData.map(s => s.title)
+    },
+    seriesData() {
       const issues = {}
       this.issues.forEach((issue) => {
         issues[issue.code] = issue
       })
-      return Object.keys(this.sortedCodes).map((key) => {
-        return issues[key].title
-      })
-    },
-    seriesData() {
+
       return Object.keys(this.sortedCodes).map((key) => {
         return {
           y: this.sortedCodes[key],
-          issueCode: key
+          issueCode: key,
+          title: issues[key]?.title,
         }
       })
-      // sort them in ascending order
       .sort((first, second) => second.y - first.y)
     },
     series() {
       return [
         {
-          name: "Issues",
-          data: this.seriesData,
-          maxPointWidth: 50,
-          color: peermetrics.colors.info
+          label: "Issues",
+          data: this.seriesData.map(s => s.y),
+          backgroundColor: peermetrics.colors.info,
+          barThickness: 20,
         }
       ];
     },
   },
 
-  watch: {
-    issues(val, prev) {
-      this.dataWatcher(val, prev)
+  methods: {
+    onChartClick(e) {
+      this.modalConferences = this.conferences.filter((conf) => {
+        return conf.issues.some((issue) => issue.code === this.seriesData.find(s => s.y === e.yValue).issueCode)
+      });
+      this.$refs["conferencesModal"].show();
     }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+#most-common-issues-chartjs {
+  max-height: 280px;
+  background-color: white;
+}
+</style>

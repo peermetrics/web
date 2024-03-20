@@ -145,19 +145,19 @@ class StatsForLineChart {
   }
 
   /**
-   * Manipulate the data to be in a format accepted by Highcharts
+   * Manipulate the data to be in a format accepted by ChartJs
    * @param {Object.<string, Stat[]>} data
    * @returns {GraphDatum[]}
    */
-  _transformDataForHighchart(data, simple=false) {
-    return Object.keys(data)
+  _transformDataForChartJs(data, simple=false) {
+    let processedData = Object.keys(data)
       .reduce((result, key) => {
         if (simple) {
-          return [...result, {name: key, data: data[key]}]
+          return [...result, {label: key, data: data[key]}]
         } else {
           let additional = data[key].map((data) => {
             return {
-              name: key,
+              label: key,
               data
             }
           })
@@ -165,6 +165,19 @@ class StatsForLineChart {
         }
       }, [])
       .filter(({ data }) => data.length > 0);
+
+      const colors = peermetrics.colors.list
+      const len = peermetrics.colors.list.length
+      return processedData.map((data, index) => {
+        // always loop through the same colors
+        let color = colors[index % len]
+
+        return {
+          borderColor: color,
+          backgroundColor: color,
+          ...data
+        }
+      })
   }
 
   _inputData() {
@@ -307,7 +320,7 @@ class StatsForLineChart {
   emosGraph() {
     this._syncData("emos");
     const data = this._emosGraphData.get();
-    const result = this._transformDataForHighchart(data);
+    const result = this._transformDataForChartJs(data);
 
     return result;
   }
@@ -319,7 +332,7 @@ class StatsForLineChart {
   rttGraph() {
     this._syncData("rtt");
     const data = this._rttGraphData.get();
-    const result = this._transformDataForHighchart(data);
+    const result = this._transformDataForChartJs(data);
 
     return result;
   }
@@ -330,7 +343,7 @@ class StatsForLineChart {
   packetLossGraph() {
     this._syncData("packetLoss");
     const data = this._packetLossGraphData.get();
-    const result = this._transformDataForHighchart(data);
+    const result = this._transformDataForChartJs(data);
 
     return result;
   }
@@ -341,7 +354,7 @@ class StatsForLineChart {
   jitterGraph() {
     this._syncData("jitter");
     const data = this._jitterGraphData.get();
-    const result = this._transformDataForHighchart(data);
+    const result = this._transformDataForChartJs(data);
 
     return result;
   }
@@ -352,7 +365,7 @@ class StatsForLineChart {
   mediaThroughputGraph() {
     this._syncData("mediaThroughput");
     const data = this._mediaThroughputGraphData.get();
-    const result = this._transformDataForHighchart(data);
+    const result = this._transformDataForChartJs(data);
 
     return result;
   }
@@ -363,7 +376,7 @@ class StatsForLineChart {
   frameSizeGraph() {
     this._syncData("frameSize");
     const data = this._frameSizeGraphData.get();
-    const result = this._transformDataForHighchart(data, true);
+    const result = this._transformDataForChartJs(data, true);
 
     return result;
   }
@@ -374,7 +387,7 @@ class StatsForLineChart {
   framesGraph() {
     this._syncData("frames");
     const data = this._framesGraphData.get();
-    const result = this._transformDataForHighchart(data, true);
+    const result = this._transformDataForChartJs(data, true);
 
     return result;
   }
@@ -385,7 +398,7 @@ class StatsForLineChart {
   averageDecodingTimeGraph() {
     this._syncData("averageDecodingTime");
     const data = this._averageDecodingTimeGraphData.get();
-    const result = this._transformDataForHighchart(data, true);
+    const result = this._transformDataForChartJs(data, true);
 
     return result;
   }

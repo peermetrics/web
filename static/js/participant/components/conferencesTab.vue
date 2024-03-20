@@ -3,7 +3,12 @@
     <div class="row">
       <div class="col">
         <h3 class="h5 mt-2">Call duration</h3>
-        <div id="call-duration-chart"></div>
+        <bar-chart
+            id="call-duration-chart"
+            :labels="callDurationChartData.labels"
+            :datasets="callDurationChartData.datasets"
+            x-grid
+        />
       </div>
     </div>
 
@@ -71,11 +76,16 @@
 
 <script>
 import { BPagination } from "bootstrap-vue";
+
 import conferencesFunctions from "../../mixins/conferences"
+import BarChart from "../../components/barChart.vue";
+
+
 export default {
   name: "conferencesTab",
 
   components: {
+    BarChart,
     BPagination
   },
 
@@ -99,13 +109,13 @@ export default {
 
   watch: {
     sessions() {
-      this.createDurationChart()
+      // this.createDurationChart()
     },
     conferences() {
       // we only want this to run for sfus
       if (!this.isSfu) return
 
-      this.createDurationChart()
+      // this.createDurationChart()
     },
   },
 
@@ -173,55 +183,14 @@ export default {
       })
 
       return {
-        categories: dates,
-        seriesData
+        labels: dates,
+        datasets: [{
+          label: 'Total duration (minutes)',
+          data: seriesData,
+          backgroundColor: peermetrics.colors.default
+        }]
       }
     }
   },
-
-  methods: {
-    createDurationChart() {
-      const {categories, seriesData} = this.callDurationChartData
-
-      Highcharts.chart("call-duration-chart", {
-        credits: false,
-        chart: {
-          type: "column"
-        },
-        title: false,
-        xAxis: {
-          categories: categories,
-          crosshair: true
-        },
-        yAxis: {
-          min: 0,
-          title: {
-            text: "Duration (min)"
-          }
-        },
-        tooltip: {
-          formatter: function() {
-              return peermetrics.utils.secondsToHMS(this.y * 60)
-          },
-          shared: true
-        },
-        plotOptions: {
-          column: {
-            pointPadding: 0.2,
-            borderWidth: 0,
-            groupPadding: 0,
-            shadow: false
-          }
-        },
-        series: [
-          {
-            name: "Interval (min) ",
-            data: seriesData,
-            color: peermetrics.colors.info
-          }
-        ]
-      });
-    }
-  }
 };
 </script>

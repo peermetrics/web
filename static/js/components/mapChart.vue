@@ -17,7 +17,7 @@ export default {
     }
   },
   components: {
-    NoDataMessage
+    NoDataMessage,
   },
   mounted() {
     this.createMapChart();

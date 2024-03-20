@@ -1,7 +1,15 @@
 <template>
   <div class="chart">
     <NoDataMessage v-if="seriesData.length === 0" />
-    <div v-else id="call-setup-time-chart"></div>
+    <bar-chart
+        v-else
+        id="call-setup-time-chartjs"
+        :labels="categories"
+        :datasets="series"
+        yTitle="No. of connections"
+        @chart-click="onChartClick"
+        x-grid
+    />
 
     <conference-list-modal
       ref="conferencesModal"
@@ -11,9 +19,9 @@
 </template>
 
 <script>
-import createColumnChart from "../mixins/createColumnChart";
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import ConferenceListModal from "../../../components/conferenceListModal.vue";
+import BarChart from "../../../components/barChart.vue";
 
 export default {
   name: "call-setup-time-chart",
@@ -28,14 +36,12 @@ export default {
     }
   },
   components: {
+    BarChart,
     NoDataMessage,
     ConferenceListModal,
   },
-  mixins: [createColumnChart],
   data() {
     return {
-      chartId: "call-setup-time-chart",
-      titleYAxis: "No. of connections",
       durationInverval: [
         {
           title: "< 250 ms",
@@ -118,35 +124,8 @@ export default {
       modalConferences: [],
     };
   },
-  mounted() {},
+
   computed: {
-    chartOptions() {
-      return {
-        plotOptions: {
-          column: {
-            pointPadding: 0.2,
-            borderWidth: 0,
-            stacking: "normal",
-          },
-
-          series: {
-            cursor: "pointer",
-            events: {
-              click: (event) => {
-                const conferences = this.conferences.filter((conf) => {
-                  // if the conf id is inside data
-                  return event.point.data.has(conf.id)
-                })
-
-                this.modalConferences = conferences;
-                this.$refs["conferencesModal"].show();
-              },
-            },
-          },
-        },
-      }
-    },
-
     durations() {
       let confSetupDurations = this.connections.map(connection => {
         // take all the negociations
@@ -160,7 +139,7 @@ export default {
               data: connection.conference
             }
           }
-        }  
+        }
       });
 
       return peermetrics.utils.groupDurations(
@@ -175,13 +154,10 @@ export default {
       const hasValues = this.durations.reduce((accumulator, currentValue) => accumulator + currentValue.number, 0)
 
       if (hasValues) {
-        return this.durations.map((n) => {
-          return {
-            y: n.number,
-            // create a unique list of conf ids
-            data: new Set(n.data)
-          }
-        })
+        return {
+          data: this.durations.map((n) => n.number),
+          values: this.durations.map((n) => new Set(n.data))
+        }
       }
 
       return []
@@ -189,18 +165,29 @@ export default {
     series() {
       return [
         {
-          name: "Connections",
-          data: this.seriesData,
-          color: peermetrics.colors.info
+          label: "Connections",
+          data: this.seriesData.data,
+          backgroundColor: peermetrics.colors.info,
+          values: this.seriesData.values
         }
       ];
     }
   },
 
-  watch: {
-    connections(val, prev) {
-      this.dataWatcher(val, prev)
+  methods: {
+    onChartClick(e) {
+      this.modalConferences = this.conferences.filter((conf) => {
+        return this.seriesData.values[e.index].has(conf.id)
+      });
+
+      this.$refs["conferencesModal"].show();
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+#call-setup-time-chartjs {
+  max-height: 280px;
+  background-color: white;
+}
+</style>

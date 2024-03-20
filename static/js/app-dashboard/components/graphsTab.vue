@@ -88,10 +88,10 @@ import CallErrorsChart from "./graphs/callErrorsChart.vue";
 import ConferenceDurationChart from "./graphs/conferenceDurationChart.vue";
 import CallSetupTimeChart from "./graphs/callSetupTimeChart.vue";
 import NoParticipantsChart from "./graphs/noParticipantsChart.vue";
-import BrowsersChart from "./graphs/browsersChart.vue";
-import OSChart from "./graphs/osChart.vue";
-import MapChart from "../../components/mapChart.vue";
 
+import BrowsersChart from "../../components/browsersChart.vue";
+import OSChart from "../../components/osChart.vue";
+import MapChart from "../../components/mapChart.vue";
 import Loader from "../../components/loader.vue";
 
 export default {

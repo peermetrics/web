@@ -1,7 +1,15 @@
 <template>
   <div class="chart">
     <NoDataMessage v-if="isEmpty" />
-    <div v-else id="conferences-chart"></div>
+    <bar-chart
+        v-else
+        id="conferences-chartjs"
+        :labels="seriesData.dates"
+        :datasets="series"
+        yTitle="No. of conferences"
+        @chart-click="onChartClick"
+        x-grid
+    />
 
     <conference-list-modal
       ref="conferencesModal"
@@ -14,8 +22,8 @@
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import ConferenceListModal from "../../../components/conferenceListModal.vue";
 
-import createColumnChart from "../mixins/createColumnChart";
 import conferencesFunctions from "../../../mixins/conferences";
+import BarChart from "../../../components/barChart.vue";
 
 export default {
   name: "conferences-chart",
@@ -26,54 +34,19 @@ export default {
     },
   },
   components: {
+    BarChart,
     NoDataMessage,
     ConferenceListModal
   },
   data() {
     return {
-      chartId: "conferences-chart",
-      titleYAxis: "No. of conferences",
       modalConferences: [],
     };
   },
 
-  mixins: [createColumnChart, conferencesFunctions],
+  mixins: [conferencesFunctions],
 
   computed: {
-    chartOptions() {
-      return {
-        plotOptions: {
-          column: {
-            pointPadding: 0.2,
-            borderWidth: 0,
-            stacking: "normal",
-          },
-
-          series: {
-            cursor: "pointer",
-            events: {
-              click: (event) => {
-                const seriesNameToKey = {
-                  successful: "success",
-                  warnings: "warning",
-                  errors: "error",
-                  ongoing: "ongoing",
-                }[event?.point?.series?.name?.toLowerCase()];
-
-                const conferences =
-                  this.groupedConferences?.[seriesNameToKey]?.[
-                    event.point.category
-                  ] ?? [];
-
-                this.modalConferences = conferences;
-                this.$refs["conferencesModal"].show();
-              },
-            },
-          },
-        },
-      }
-    },
-
     /**
      * Used to group the conferences by day
      * It also looks to see if they have warnings or erros on them
@@ -163,57 +136,58 @@ export default {
       };
     },
 
-    categories() {
-      return this.seriesData.dates;
-    },
-
     series() {
       return [
         {
-          name: "Ongoing",
-          data: this.seriesData.ongSeriesData,
-          color: peermetrics.colors.info,
-        },
-        {
-          name: "Errors",
-          data: this.seriesData.errSeriesData,
-          color: peermetrics.colors.error,
-        },
-        {
-          name: "Warnings",
-          data: this.seriesData.warnSeriesData,
-          color: peermetrics.colors.warning,
-        },
-        {
-          name: "Successful",
+          label: "Successful",
           data: this.seriesData.succSeriesData,
-          color: peermetrics.colors.default,
+          backgroundColor: peermetrics.colors.default,
+        },
+        {
+          label: "Warnings",
+          data: this.seriesData.warnSeriesData,
+          backgroundColor: peermetrics.colors.warning,
+        },
+        {
+          label: "Errors",
+          data: this.seriesData.errSeriesData,
+          backgroundColor: peermetrics.colors.error,
+        },
+        {
+          label: "Ongoing",
+          data: this.seriesData.ongSeriesData,
+          backgroundColor: peermetrics.colors.info,
         },
       ];
     },
 
     isEmpty() {
-      if (
-        Object.keys(this.groupedConferences.success).length < 1 &&
-        Object.keys(this.groupedConferences.warning).length < 1 &&
-        Object.keys(this.groupedConferences.error).length < 1 &&
-        Object.keys(this.groupedConferences.ongoing).length < 1
-      )
-        return true;
-      else return false;
+      return Object.keys(this.groupedConferences.success).length < 1 &&
+          Object.keys(this.groupedConferences.warning).length < 1 &&
+          Object.keys(this.groupedConferences.error).length < 1 &&
+          Object.keys(this.groupedConferences.ongoing).length < 1;
     },
   },
 
-  watch: {
-    conferences(val, prev) {
-      this.dataWatcher(val, prev)
+  methods: {
+    onChartClick(e) {
+      const seriesNameToKey = {
+        Successful: "success",
+        Warnings: "warning",
+        Errors: "error",
+        Ongoing: "ongoing",
+      }[e.label];
+
+      this.modalConferences = this.groupedConferences?.[seriesNameToKey]?.[e.xValue] ?? [];
+      this.$refs["conferencesModal"].show();
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.card-custom-column {
-  line-height: 10;
+#conferences-chartjs {
+  max-height: 280px;
+  background-color: white;
 }
 </style>

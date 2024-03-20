@@ -1,13 +1,18 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.series.length===0" />
-    <div v-else id="number-of-participants-chart"></div>
+    <NoDataMessage v-if="dataSeries.length===0" />
+    <pie-chart
+        v-else
+        id="number-of-participants-chartjs"
+        tooltipTitle="Number of participants"
+        :datasets="dataSeries"
+    />
   </div>
 </template>
 
 <script>
-import createPieChart from "../mixins/createPieChart";
 import NoDataMessage from "../../../components/noDataMessage.vue";
+import PieChart from "../../../components/pieChart.vue";
 
 export default {
   name: "participants-chart",
@@ -18,18 +23,10 @@ export default {
     }
   },
   components: {
+    PieChart,
     NoDataMessage
   },
-  data() {
-    return {
-      chartId: "number-of-participants-chart",
-      seriesName: "Number of participants",
-      pointFormat:
-        '<span style="color:{point.color}">{point.name}</span>: ' +
-        "<b>{point.y:.2f}%</b><br/>Count:<b>{point.count}</b></br>"
-    };
-  },
-  mixins: [createPieChart],
+
   mounted() {},
   computed: {
     dataSeries() {
@@ -48,17 +45,14 @@ export default {
         });
       }
 
-      return {
-        series,
-        drilldown: null
-      };
-    }
-  },
-
-  watch: {
-    conferences(val, prev) {
-      this.dataWatcher(val, prev)
+      return series;
     }
   }
 };
 </script>
+
+<style scoped>
+#number-of-participants-chartjs {
+  background-color: white;
+}
+</style>

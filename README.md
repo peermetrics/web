@@ -26,7 +26,7 @@ To run this locally check the main [project page](https://github.com/peermetrics
 
 - CSS: bootstrap + theme
 - build tools: rollup
-- charts: HighCharts
+- charts: ChartJS
 
 #### Static pages
 
