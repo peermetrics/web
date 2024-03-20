@@ -18,6 +18,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - 
+        name: Checkout repository
+        uses: actions/checkout@v2
+
+      - 
         name: Use Node.js
         uses: actions/setup-node@v4
         with:
