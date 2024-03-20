@@ -1,7 +1,8 @@
 # Web service - peer metrics
 
 > [!Note]
-> This repo is only one part of the bigger peer metrics WebRTC monitoring service. Check out the full project [here](https://github.com/peermetrics/peermetrics).
+> This repo is only one part of the bigger peer metrics WebRTC monitoring service. 
+> Check out the full project [here](https://github.com/peermetrics/peermetrics).
 
 Web, is the user facing part of peer metrics. It contains all the functionality to view and analyze the collected events
 
@@ -60,7 +61,7 @@ To start development on these, run:
 
 We are using `rollup` to build the pages. Also, we don't use a project wide build with a single bundle, but we do it on a page by page basis. The watch command will build them individually. If dev starts on a new page that uses Vue, it will also need to be added in `rollup.config.js`.
 
-To load that code in the page we use  (the old way):
+To load that code in the page we use (the old way):
 
 <script src="/static/js/participant/index.js"></script>
 
