@@ -1,6 +1,7 @@
 # Web service - peer metrics
 
-**Note**: this represents a part of the peer metrics WebRTC service. Check out the full project [here](https://github.com/peermetrics/peermetrics).
+> [!Note]
+> This repo is only one part of the bigger peer metrics WebRTC monitoring service. Check out the full project [here](https://github.com/peermetrics/peermetrics).
 
 Web, is the user facing part of peer metrics. It contains all the functionality to view and analyze the collected events
 
