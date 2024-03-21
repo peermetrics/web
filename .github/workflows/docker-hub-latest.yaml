@@ -31,9 +31,6 @@ jobs:
         name: npm Build
         run: npm run build
 
-      - name: ls dir
-        run: ls -al static/js/app-dashboard
-
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -49,6 +46,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: true
           tags: peermetrics/web:latest
 
