@@ -47,8 +47,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
           tags: peermetrics/web:latest
+          no-cache: true
+          push: true
 
       - name: Logout from Docker Hub
         run: docker logout
