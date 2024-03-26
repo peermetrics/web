@@ -18,7 +18,7 @@ export default defineConfig({
           'vue': 'Vue',
           'chart.js': 'Chart',
         },
-        entryFileNames: `index.min.js`,
+        entryFileNames: isProd ? `index.min.js` : `index.js`,
         format: 'iife',
       },
       input: `static/js/${target}/index.vue`,

@@ -35,6 +35,10 @@
     peermetrics.daysHistory = {{ data_retention_days }}
   </script>
 
-  <script src="/static/js/app-dashboard/index.js"></script>
+  {% if DEV %}
+    <script src="/static/js/app-dashboard/index.js"></script>
+  {% else %}
+    <script src="/static/js/app-dashboard/index.min.js"></script>
+  {% endif %}
 
 {% endblock %}

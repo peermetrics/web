@@ -4,11 +4,10 @@
   "description": "web service of peermetrics",
   "main": "index.js",
   "scripts": {
-    "build": "npm-run-all --parallel build-participant build-conference build-dashboard",
     "build-participant": "cross-env BUILD_TARGET=participant vite build",
     "build-conference": "cross-env BUILD_TARGET=conference vite build",
     "build-dashboard": "cross-env BUILD_TARGET=app-dashboard vite build",
-    "build-prod": "cross-env BUILD=production npm-run-all --parallel build-participant build-conference build-dashboard",
+    "build": "cross-env BUILD=production npm-run-all --parallel build-participant build-conference build-dashboard",
     "watch-participant": "cross-env BUILD_TARGET=participant vite build --watch --sourcemap",
     "watch-conference": "cross-env BUILD_TARGET=conference vite build --watch --sourcemap",
     "watch-dashboard": "cross-env BUILD_TARGET=app-dashboard vite build --watch --sourcemap",
@@ -39,7 +38,7 @@
     "smartwizard": "^4.4.1",
     "vue": "2.7.16",
     "vue-chartjs": "^5.3.0",
-    "wretch": "^1.7.9"
+    "wretch": "^2.8.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue2": "^2.3.1",
