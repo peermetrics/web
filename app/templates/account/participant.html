@@ -1,47 +1,52 @@
 {% extends "account/account_base.html" %}
 
 {% block assets %}
-    {{ super() }}
+  {{ super() }}
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
 
-    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
 
-    {% if DEV %}
-      <script src="/static/node_modules/vue/dist/vue.runtime.js"></script>
-      <script src="/static/node_modules/chart.js/dist/chart.umd.js"></script>
-    {% else %}
-      <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    {% endif %}
+  {% if DEV %}
+    <script src="/static/node_modules/vue/dist/vue.runtime.js"></script>
+    <script src="/static/node_modules/chart.js/dist/chart.umd.js"></script>
+  {% else %}
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  {% endif %}
 
 {% endblock %}
 
 {% block container %}
-    <div class="row">
-        <div class="col mb-4">
-            <h1 class="h2">{{ participant.participant_name }}</h1>
-            <h2 class="h4"><span class="text-muted">Participant ID:</span> {{ participant.participant_id }}</h2>
-            {% if participant.is_sfu %}
-                <span class="alert alert-info">SFU server</span>
-            {% endif %}
-        </div>
+  <div class="row">
+    <div class="col mb-4">
+      <h1 class="h2">{{ participant.participant_name }}</h1>
+      <h2 class="h4"><span class="text-muted">Participant ID:</span> {{ participant.participant_id }}</h2>
+      {% if participant.is_sfu %}
+        <span class="alert alert-info">SFU server</span>
+      {% endif %}
     </div>
+  </div>
 
-    <div class="row">
-        <div class="col">
-            <div id="app"></div>
-        </div>
+  <div class="row">
+    <div class="col">
+      <div id="app"></div>
     </div>
+  </div>
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        peermetrics.participant = {
-            id: '{{ participant.id }}',
-            isSfu: {{ 'true' if participant.is_sfu else 'false' }}
-        }
-        peermetrics.daysHistory = {{ data_retention_days }}
-    </script>
+  <script>
+    peermetrics.participant = {
+      id: '{{ participant.id }}',
+      isSfu: {{ 'true' if participant.is_sfu else 'false' }}
+    }
+    peermetrics.daysHistory = {{ data_retention_days }}
+  </script>
+
+  {% if DEV %}
     <script src="/static/js/participant/index.js"></script>
+  {% else %}
+    <script src="/static/js/participant/index.min.js"></script>
+  {% endif %}
 {% endblock %}
