@@ -26,7 +26,7 @@ class JitterGraphData extends DataForGraphs {
       const yPoint = this._calculateJitter(stat, key);
       if (Number.isFinite(yPoint)) {
         const xPoint = this._statTimeEpoch(stat);
-        const point = [xPoint, Number(yPoint.toFixed(2))];
+        const point = [xPoint, Number(yPoint.toFixed(4))];
 
         data[stat.connection].push(point);
       }
