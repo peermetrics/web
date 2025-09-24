@@ -1,10 +1,22 @@
+/**
+ * PeerMetrics JavaScript utility library
+ * Provides URL management, utility functions, and API communication methods
+ */
 (function () {
   if (!window.peermetrics) return
 
   var peermetrics = window.peermetrics
 
+  /**
+   * URL configuration object containing API endpoints
+   */
   peermetrics.urls = {
     'sessions': '/sessions',
+    /**
+     * Generates conference URL paths
+     * @param {string} [conferenceId] - Optional conference ID
+     * @returns {string} Conference URL path
+     */
     conferences: function (conferenceId) {
       if (conferenceId) {
         return '/conferences/' + conferenceId
@@ -12,6 +24,12 @@
         return '/conferences'
       }
     },
+    /**
+     * Generates conference events URL path
+     * @param {string} conferenceId - Conference ID (required)
+     * @returns {string} Conference events URL path
+     * @throws {Error} When conferenceId is missing
+     */
     conferenceEvents: function (conferenceId) {
       if (!conferenceId) {
         throw new Error('Missing conferenceId')
@@ -19,6 +37,12 @@
 
       return this.conferences(conferenceId) + '/events'
     },
+    /**
+     * Generates conference graph URL path
+     * @param {string} conferenceId - Conference ID (required)
+     * @returns {string} Conference graph URL path
+     * @throws {Error} When conferenceId is missing
+     */
     conferenceGraph: function (conferenceId) {
       if (!conferenceId) {
         throw new Error('Missing conferenceId')
@@ -26,6 +50,11 @@
 
       return this.conferences(conferenceId) + '/graphs'
     },
+    /**
+     * Generates connection URL paths
+     * @param {string} [connectionId] - Optional connection ID
+     * @returns {string} Connection URL path
+     */
     connections: function (connectionId) {
       if (connectionId) {
         return '/connections/' + connectionId
@@ -33,6 +62,11 @@
         return '/connections'
       }
     },
+    /**
+     * Generates issue URL paths
+     * @param {string} [issueId] - Optional issue ID
+     * @returns {string} Issue URL path
+     */
     issues: function (issueId) {
       if (issueId) {
         return '/issues/' + issueId
@@ -41,6 +75,11 @@
       }
     },
     'organizations': '/organizations',
+    /**
+     * Generates organization team members URL path
+     * @param {string} orgId - Organization ID
+     * @returns {string} Organization team members URL path
+     */
     organizationTeam: function (orgId) {
       return `/organizations/${orgId}/members`
     },
@@ -68,6 +107,9 @@
     throw new Error('Could not find path with that name')
   }
 
+  /**
+   * Color configuration object containing predefined colors for UI elements
+   */
   peermetrics.colors = {
     default: '#4582EC',
     warning: '#f0ad4e',
@@ -76,7 +118,13 @@
     list: ["#2caffe", "#544fc5", "#00e272", "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a", "#91e8e1"]
   }
 
+  /**
+   * Global configuration object containing predefined data structures
+   */
   peermetrics.globals = {
+    /**
+     * Duration intervals for grouping time-based data
+     */
     durationInterval: [
       {
         title: '< 1 m',
@@ -168,15 +216,15 @@
     countryCodes: {"AF":"Afghanistan","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla","AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan","BO":"Bolivia","BQ":"Bonaire, Sint Eustatius and Saba","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil","IO":"British Indian Ocean Territory","BN":"Brunei Darussalam","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi","CV":"Cabo Verde","KH":"Cambodia","CM":"Cameroon","CA":"Canada","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad","CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands","CO":"Colombia","KM":"Comoros","CD":"Congo (the Democratic Republic of the)","CG":"Congo","CK":"Cook Islands","CR":"Costa Rica","HR":"Croatia","CU":"Cuba","CW":"Curaçao","CY":"Cyprus","CZ":"Czechia","CI":"Côte d'Ivoire","DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador","GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","SZ":"Eswatini","ET":"Ethiopia","FK":"Falkland Islands","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana","PF":"French Polynesia","TF":"French Southern Territories","GA":"Gabon","GM":"Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland","GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey","GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana","HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Holy See","HN":"Honduras","HK":"Hong Kong","HU":"Hungary","IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy","JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan","KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KP":"North Korea","KR":"South Korea","KW":"Kuwait","KG":"Kyrgyzstan","LA":"Lao","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein","LT":"Lithuania","LU":"Luxembourg","MO":"Macao","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta","MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico","FM":"Micronesia","MD":"Republic of Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco","MZ":"Mozambique","MM":"Myanmar","NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua","NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman","PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru","PH":"Philippines","PN":"Pitcairn","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar","MK":"Republic of North Macedonia","RO":"Romania","RU":"Russian Federation","RW":"Rwanda","RE":"Réunion","BL":"Saint Barthélemy","SH":"Saint Helena, Ascension and Tristan da Cunha","KN":"Saint Kitts and Nevis","LC":"Saint Lucia","MF":"Saint Martin (French part)","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines","WS":"Samoa","SM":"San Marino","ST":"Sao Tome and Principe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia","SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SX":"Sint Maarten (Dutch part)","SK":"Slovakia","SI":"Slovenia","SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa","GS":"South Georgia and the South Sandwich Islands","SS":"South Sudan","ES":"Spain","LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SE":"Sweden","CH":"Switzerland","SY":"Syrian Arab Republic","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste","TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey","TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine","AE":"UAE","GB":"UK","UM":"United States Minor Outlying Islands","US":"USA","UY":"Uruguay","UZ":"Uzbekistan","VU":"Vanuatu","VE":"Venezuela","VN":"Viet Nam","VG":"Virgin Islands (British)","VI":"Virgin Islands (U.S.)","WF":"Wallis and Futuna","EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe","AX":"Åland Islands"}
   }
 
+  /**
+   * Utility functions collection
+   */
   peermetrics.utils = {
     /**
-     * Custom reduce method
-     * Used to take an array of repeating terms and creating an object
-     * that counts how many occurances each value has
-     * @param  {Array} arr The array of values
-     * @param  {Int} total Optional. If we also want to compute a percentage of each value, out of total
-     *
-     * @return {Object}
+     * Takes an array of repeating terms and creates an object that counts occurrences of each value
+     * @param {Array} arr - The array of values to reduce
+     * @param {number} [total] - Optional total for computing percentages
+     * @returns {Object} Object with value counts or percentages
      */
     reduce: function (arr, total) {
       var result = arr.reduce(function (acc, curr) {
@@ -194,10 +242,10 @@
     },
 
     /**
-     * Used to group number into interval
-     * @param  {Array} result    An array of numbers (int most likely)
-     * @param  {Array} intervals An array of objects. structure: {min, max, number}
-     * @return {Array}           Same as intervals but with an incremened number
+     * Groups numbers into predefined intervals
+     * @param {Array} result - Array of numbers (objects with value property)
+     * @param {Array} intervals - Array of interval objects with min, max, number properties
+     * @returns {Array} Intervals array with incremented numbers and populated data
      */
     groupDurations: function (result, intervals) {
       // create copies
@@ -225,9 +273,9 @@
     },
 
     /**
-     * Used to create an array for formated days used as X axis on graphs
-     * @param  {Number} days The number of days. Usually 15/30
-     * @return {Array}      The array of dates. Structure: ['04/15', '04/16', ...]
+     * Creates an array of formatted dates for use as X axis on graphs
+     * @param {number} days - The number of days (usually 15/30)
+     * @returns {Array} Array of date strings in MM/DD format
      */
     createDatesArray: function (days) {
       if (!window.moment) return []
@@ -246,9 +294,10 @@
     },
 
     /**
-     * Used to transform sec into a string formated as "0h 0m 0s"
-     * @param  {Number} sec The number of seconds
-     * @return {String}     The formated string
+     * Converts seconds to formatted time string (hours, minutes, seconds)
+     * @param {number} sec - Number of seconds to convert
+     * @returns {string} Formatted time string (e.g., "1h 30m 45s")
+     * @throws {Error} When sec is not a number or is negative
      */
     secondsToHMS: function (sec) {
       if (typeof sec !== 'number') {
@@ -279,32 +328,38 @@
       return moment(sec).utc().format('s[s]')
     },
 
+    /**
+     * Converts milliseconds to HMS format
+     * @param {number} ms - Milliseconds to convert
+     * @returns {string} Formatted time string
+     */
     msToHMS: function (ms) {
       return this.secondsToHMS(ms / 1000)
     },
 
     /**
-     * Used to compute minutes out of seconds. It rounds down because we don't need that much accuracy
-     * @param  {Number} sec Number of seconds
-     * @return {Number}     Number of minutes
+     * Converts seconds to minutes, rounded down
+     * @param {number} sec - Number of seconds
+     * @returns {number} Number of minutes (rounded down)
      */
     secondsToMinutes: function (sec) {
       return Math.floor(Number(sec) / 60)
     },
 
     /**
-     * Check if a variable is null
-     * @param {String | Number | Object} value The variable that is being tested
-     * @return {Boolean}
-    */
+     * Checks if a variable is null
+     * @param {*} value - The variable to test
+     * @returns {boolean} True if value is null
+     */
     isNull: function(value) {
       return typeof value === 'object' && !value
     },
 
     /**
-     * Transform bytes in MB, KB and so on
-     * @param {Number} bytes Number of bytes
-     * @param {Number} decimals How many decimals 
+     * Converts bytes to human-readable format (KB, MB, GB, etc.)
+     * @param {number} bytes - Number of bytes
+     * @param {number} [decimals=2] - Number of decimal places
+     * @returns {string} Formatted byte string
      */
     formatBytes: function(bytes, decimals = 2) {
       if (bytes === 0) return '0 Bytes';
@@ -319,9 +374,9 @@
     },
 
     /**
-     * Used to get a color code for an event
-     * @param  {String} eventType The name of the event
-     * @return {String}           The HEX color code
+     * Returns a color code for a specific event type
+     * @param {string} eventType - The name of the event
+     * @returns {string} HEX color code for the event type
      */
     getColorForEventType: function (eventType) {
       const defaultColor = "#b3e5fc"
@@ -356,10 +411,10 @@
     },
 
     /**
-     * Used to populate issues inside models that have references to issues
-     * @param  {Array} models Array of DB models (conferences, sessions, etc)
-     * @param  {Array} issues Array of issues
-     * @return {Array}        The models enhanced
+     * Populates issue references in models with actual issue objects
+     * @param {Array} models - Array of DB models (conferences, sessions, etc.)
+     * @param {Array} issues - Array of issue objects
+     * @returns {Array} Models with populated issue objects
      */
     populateIssues: function (models, issues) {
       let issueMap = {}
@@ -384,18 +439,32 @@
     }
   }
 
+  /**
+   * API root configuration using wretch library
+   */
   var apiRoot = wretch(peermetrics.settings.apiRoot)
         .options({credentials: "include", mode: "cors"})
         // .content("application/json")
         .accept("application/json")
 
-  // used to post data to the api server
+  /**
+   * Makes a POST request to the API server
+   * @param {string} url - The endpoint URL
+   * @param {Object} data - The data to send
+   * @returns {Promise} Promise resolving to JSON response
+   */
   peermetrics.post = function (url, data) {
     if (!url || !data) return Promise.reject('missing argument url or argument data')
 
     return apiRoot.url(url).post(data).json()
   }
 
+  /**
+   * Makes a PUT request to the API server
+   * @param {string} url - The endpoint URL
+   * @param {Object} data - The data to send
+   * @returns {Promise} Promise resolving to JSON response
+   */
   peermetrics.put = function (url, data) {
     if (!url || !data) return Promise.reject('missing argument url or argument data')
 
@@ -431,6 +500,12 @@
     })
   }
 
+  /**
+   * Makes a DELETE request to the API server
+   * @param {string} url - The endpoint URL
+   * @param {Object} [query] - Optional query parameters
+   * @returns {Promise} Promise resolving to JSON response
+   */
   peermetrics.delete = function (url, query) {
     if (!url) return Promise.reject('missing argument url')
 
