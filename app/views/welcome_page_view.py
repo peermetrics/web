@@ -2,9 +2,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import View
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from ..models.organization import Organization
 
+@method_decorator(login_required, name='dispatch')
 class WelcomePage(View):
     """
     View used with newly created accounts.
@@ -22,10 +25,10 @@ class WelcomePage(View):
         :return:
         """
 
-        if Organization.objects.count() > 0:
+        if request.user.organization:
             return HttpResponseRedirect(reverse('dashboard'))
 
-        # if user has at least one org registered, redirect to dashboard, no need for this view
+        # if user has an organization registered, redirect to dashboard, no need for this view
 
         # on this view
         # create the org (or if created, rename it)

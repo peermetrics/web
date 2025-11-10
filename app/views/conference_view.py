@@ -1,10 +1,13 @@
-from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.conf import settings
+from django.utils.decorators import method_decorator
 from django.views.generic import View
 
 from ..models.conference import Conference
 
+@method_decorator(login_required, name='dispatch')
 class ConferenceView(View):
     template_name = 'account/conference.html'
 
@@ -19,6 +22,9 @@ class ConferenceView(View):
 
         app = conference.app
         organization = app.organization
+
+        if request.user.organization != organization:
+            return HttpResponseForbidden('You do not have permission to access this conference.')
 
         context = {
             'breadcrumbs': [{
