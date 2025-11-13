@@ -9,10 +9,12 @@ from django.contrib.auth import (
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
 from django_ratelimit.decorators import ratelimit
 
 
+@never_cache
 @ratelimit(key='ip', rate='5/5m', method='POST', block=False)
 @require_http_methods(["GET", "POST"])
 def login_view(request):
@@ -61,6 +63,7 @@ def logout_view(request):
     return redirect("login")
 
 
+@never_cache
 @login_required
 @require_http_methods(["GET", "POST"])
 def change_password_view(request):

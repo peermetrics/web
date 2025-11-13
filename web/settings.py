@@ -137,6 +137,9 @@ STATIC_ROOT = '/app/static'
 
 DEFAULT_INTERVAL = 10000
 
+# Messages
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
 # Sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
