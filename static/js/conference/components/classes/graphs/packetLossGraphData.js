@@ -34,7 +34,7 @@ class PacketLossGraphData extends DataForGraphs {
       if (Number.isFinite(yPoint)) {
 
         const xPoint = this._statTimeEpoch(stat);
-        const point = [xPoint, Number(yPoint.toFixed(1))];
+        const point = [xPoint, Number(yPoint.toFixed(4))];
 
         data[stat.connection].push(point);
       }
