@@ -10,3 +10,8 @@ urlpatterns = [
     path('_ah/warmup/', WarmupView.as_view(), name='warmup'),
     path('', include('app.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# Custom error handlers
+handler404 = 'app.errors.handler404'
+handler403 = 'app.errors.handler403'
+handler500 = 'app.errors.handler500'

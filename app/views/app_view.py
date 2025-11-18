@@ -1,9 +1,12 @@
-from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, reverse
+from django.utils.decorators import method_decorator
 from django.views.generic import View
 
 from ..models.app import App
 
+@method_decorator(login_required, name='dispatch')
 class AppView(View):
     """
     The main view for an account.
@@ -20,6 +23,9 @@ class AppView(View):
             return HttpResponseRedirect(reverse('dashboard'))
 
         organization = app.organization
+
+        if request.user.organization != organization:
+            return HttpResponseForbidden('You do not have permission to access this app.')
 
         context = {
             'breadcrumbs': [{

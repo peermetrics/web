@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+  <section class="space-sm">
+    <div class="container">
+      <div class="row mb-4">
+        <div class="col text-center">
+          <a href="/">
+            <img class="logo" src="/static/img/logo-icon.png" alt="Peermetrics Logo" />
+          </a>
+          <h1 class="mt-4 display-1 text-muted">404</h1>
+          <h2 class="mt-2">Oops! We couldn't find that page</h2>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+          <div class="card">
+            <div class="card-body text-center">
+              <p class="lead mb-4">
+                The page you're looking for seems to have wandered off.
+              </p>
+              <p class="text-muted">
+                It might have been moved, deleted, or maybe it never existed in the first place.
+              </p>
+
+              {% if request.user.is_authenticated %}
+                <a href="{{ url('dashboard') }}" class="btn btn-primary mt-3">
+                  Back to Dashboard
+                </a>
+              {% else %}
+                <a href="/" class="btn btn-primary mt-3">
+                  Back to Home
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

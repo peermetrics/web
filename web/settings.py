@@ -109,6 +109,14 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
 ]
 
+AUTH_USER_MODEL = 'app.User'
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/dashboard'
+LOGOUT_REDIRECT_URL = '/login'
+
+# Default admin password (used to detect default password on login)
+DEFAULT_ADMIN_PASSWORD = os.getenv('DEFAULT_ADMIN_PASSWORD', 'admin')
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -129,6 +137,9 @@ STATIC_ROOT = '/app/static'
 
 DEFAULT_INTERVAL = 10000
 
+# Messages
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
 # Sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
@@ -138,7 +149,8 @@ if not DEV:
 SESSION_COOKIE_NAME = 'pmsession'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_AGE = 2419200
-# SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = not DEBUG  # Enable HTTPS-only cookies in production
+SESSION_COOKIE_SAMESITE = 'Lax'  # Prevent CSRF attacks
 
 EVENT_CATEGORIES = {
     'browser': 'B',

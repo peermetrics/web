@@ -3,6 +3,7 @@ import json
 from django.utils.http import urlencode
 from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.contrib.messages import get_messages
 from django.urls import reverse
 from jinja2 import Environment
 
@@ -34,7 +35,8 @@ def environment(**options):
         "DEV": settings.DEV,
         "template_vars": settings.TEMPLATE_VARS,
         'url': custom_reverse,
-        'static': staticfiles_storage.url
+        'static': staticfiles_storage.url,
+        'get_messages': get_messages
     })
     env.filters['to_json'] = json.dumps
     env.filters['from_json'] = json.loads

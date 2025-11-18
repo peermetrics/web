@@ -1,5 +1,6 @@
 argon2-cffi
 Django<3.0
+django-ratelimit
 gunicorn
 PyJWT==1.7.1
 psycopg2-binary

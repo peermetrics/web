@@ -94,3 +94,34 @@ class PMError(Exception):
     def __init__(self, status=500, app_error=None):
         self.status = status
         self.app_error = app_error or UNKNOWN_ERROR
+
+
+# Custom error handlers for HTTP errors
+from django.shortcuts import render
+
+
+def handler404(request, exception=None):
+    """
+    Custom 404 error handler.
+    Renders a friendly 404 page with context-aware navigation.
+    """
+    return render(request, '404.html', status=404)
+
+
+def handler403(request, exception=None):
+    """
+    Custom 403 error handler.
+    Renders a friendly 403 page with context-aware navigation.
+    Handles both permission denied and CSRF verification failures.
+    """
+    context = {'exception': exception}
+    return render(request, '403.html', context, status=403)
+
+
+def handler500(request):
+    """
+    Custom 500 error handler.
+    Renders a friendly 500 page.
+    Note: This handler does not receive the request context in production.
+    """
+    return render(request, '500.html', status=500)

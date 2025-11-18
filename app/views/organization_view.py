@@ -1,12 +1,15 @@
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views.generic import View
 
 from ..models.app import App
 from ..models.organization import Organization
 
+@method_decorator(login_required, name='dispatch')
 class OrganizationView(View):
     template_name = 'account/organization.html'
 
@@ -20,6 +23,9 @@ class OrganizationView(View):
 
         if not organization:
             return HttpResponseRedirect(reverse('dashboard'))
+
+        if request.user.organization != organization:
+            return HttpResponseForbidden('You do not have permission to access this organization.')
 
         apps = App.filter(organization=organization)
 
