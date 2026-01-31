@@ -3,6 +3,41 @@
 
   var peermetrics = window.peermetrics
 
+  function normalizePrefix(prefix) {
+    if (!prefix) return ''
+    if (prefix === '/') return ''
+    return prefix.endsWith('/') ? prefix.slice(0, -1) : prefix
+  }
+
+  function derivePrefixFromApiRoot() {
+    if (!peermetrics.settings || !peermetrics.settings.apiRoot) return ''
+    try {
+      var url = new URL(peermetrics.settings.apiRoot)
+      var path = url.pathname || ''
+      if (path.endsWith('/')) {
+        path = path.slice(0, -1)
+      }
+      if (path.endsWith('/v1')) {
+        path = path.slice(0, -3)
+      }
+      return normalizePrefix(path)
+    } catch (err) {
+      return ''
+    }
+  }
+
+  function withPrefix(path) {
+    var prefix = normalizePrefix(peermetrics.settings && peermetrics.settings.urlPrefix)
+    if (!prefix) {
+      prefix = derivePrefixFromApiRoot()
+    }
+    if (!prefix) return path
+    if (!path.startsWith('/')) {
+      path = '/' + path
+    }
+    return prefix + path
+  }
+
   peermetrics.urls = {
     'sessions': '/sessions',
     conferences: function (conferenceId) {
@@ -62,7 +97,15 @@
    */
   peermetrics.createPath = function (pathName, arg) {
     if (pathName === 'conference') {
-      return `/conference/${arg}`
+      return withPrefix(`/conference/${arg}`)
+    }
+
+    if (pathName === 'participant') {
+      return withPrefix(`/participant/${arg}`)
+    }
+
+    if (pathName === 'docs') {
+      return withPrefix('/docs')
     }
 
     throw new Error('Could not find path with that name')

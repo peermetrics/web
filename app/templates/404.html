@@ -9,8 +9,8 @@
     <div class="container">
       <div class="row mb-4">
         <div class="col text-center">
-          <a href="/">
-            <img class="logo" src="/static/img/logo-icon.png" alt="Peermetrics Logo" />
+          <a href="{{ url('home') }}">
+            <img class="logo" src="{{ static('img/logo-icon.png') }}" alt="Peermetrics Logo" />
           </a>
           <h1 class="mt-4 display-1 text-muted">404</h1>
           <h2 class="mt-2">Oops! We couldn't find that page</h2>
@@ -33,7 +33,7 @@
                   Back to Dashboard
                 </a>
               {% else %}
-                <a href="/" class="btn btn-primary mt-3">
+                <a href="{{ url('home') }}" class="btn btn-primary mt-3">
                   Back to Home
                 </a>
               {% endif %}

@@ -3,7 +3,7 @@
     <loader v-if="!isReady" />
     <div v-else>
       <div class="card-header">
-        <a :href="/participant/ + participant.id">
+        <a :href="participantPath(participant.id)">
           <div v-if="participant.name">
             <h5 class="card-title">{{participant.name}}</h5>
             <small class="text-muted">{{participant.participantId}}</small>
@@ -210,6 +210,13 @@ export default {
   },
 
   methods: {
+    participantPath(participantId) {
+      if (window.peermetrics && typeof window.peermetrics.createPath === 'function') {
+        return window.peermetrics.createPath('participant', participantId)
+      }
+      return '/participant/' + participantId
+    },
+
     getAccordionId(issueId) {
       return 'accordion-' + issueId
     },
