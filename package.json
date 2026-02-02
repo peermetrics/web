@@ -8,6 +8,7 @@
     "build-conference": "cross-env BUILD_TARGET=conference vite build",
     "build-dashboard": "cross-env BUILD_TARGET=app-dashboard vite build",
     "build": "cross-env BUILD=production npm-run-all --parallel build-participant build-conference build-dashboard",
+    "build-dev": "npm-run-all build-participant build-conference build-dashboard",
     "watch-participant": "cross-env BUILD_TARGET=participant vite build --watch --sourcemap",
     "watch-conference": "cross-env BUILD_TARGET=conference vite build --watch --sourcemap",
     "watch-dashboard": "cross-env BUILD_TARGET=app-dashboard vite build --watch --sourcemap",
