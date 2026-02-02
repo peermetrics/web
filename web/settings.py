@@ -17,20 +17,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 ALLOWED_HOSTS = ['*']
 
-# CSRF trusted origins (Django 4.0+). In DEBUG, common dev origins are trusted; otherwise use CSRF_TRUSTED_ORIGINS env.
-_dev_origins = [
-    'http://localhost',
-    'http://127.0.0.1',
-    'http://localhost:8080',
-    'http://127.0.0.1:8080',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-]
-_env_origins = [
-    o.strip() for o in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()
-]
-CSRF_TRUSTED_ORIGINS = _env_origins if _env_origins else (_dev_origins if DEBUG else [])
-
 INSTALLED_APPS = [
     'app',
     'django.contrib.admin',
