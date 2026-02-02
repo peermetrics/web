@@ -1,5 +1,5 @@
 import DataForGraphs from "./dataForGraphs";
-import { CONNECTION, Stat } from "../shared";
+import { CONNECTION } from "../shared";
 
 class RttGraphData extends DataForGraphs {
   /**

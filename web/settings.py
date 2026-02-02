@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -124,9 +125,16 @@ PASSWORD_HASHERS = [
 ]
 
 AUTH_USER_MODEL = 'app.User'
-LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = '/dashboard'
-LOGOUT_REDIRECT_URL = '/login'
+URL_PREFIX = os.getenv('URL_PREFIX', '').strip()
+if URL_PREFIX and not URL_PREFIX.startswith('/'):
+    URL_PREFIX = f'/{URL_PREFIX}'
+if URL_PREFIX.endswith('/'):
+    URL_PREFIX = URL_PREFIX[:-1]
+
+
+LOGIN_URL = f'{URL_PREFIX}/login' if URL_PREFIX else '/login'
+LOGIN_REDIRECT_URL = f'{URL_PREFIX}/dashboard' if URL_PREFIX else '/dashboard'
+LOGOUT_REDIRECT_URL = f'{URL_PREFIX}/login' if URL_PREFIX else '/login'
 
 # Default admin password (used to detect default password on login)
 DEFAULT_ADMIN_PASSWORD = os.getenv('DEFAULT_ADMIN_PASSWORD', 'admin')
@@ -146,8 +154,9 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = f'{URL_PREFIX}/static/' if URL_PREFIX else '/static/'
 STATIC_ROOT = '/app/static'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 DEFAULT_INTERVAL = 10000
 
@@ -176,4 +185,5 @@ EVENT_CATEGORIES = {
 # Template settings: vars that will be made available in templates
 TEMPLATE_VARS = {
     'apiRoot': os.getenv('API_ROOT'),
+    'urlPrefix': URL_PREFIX,
 }

@@ -15,7 +15,7 @@
           <div class="row mb-4">
             <div class="col text-center">
               <a href="{{ url('home') }}">
-                <img class="logo" src="/static/img/logo-icon.png" alt="Logo" />
+                <img class="logo" src="{{ static('img/logo-icon.png') }}" alt="Logo" />
               </a>
             </div>
             <!--end of col-->
@@ -67,7 +67,7 @@
                       <div id="first">
                         <div class="row justify-content-around align-items-center">
                           <div class="col-4 col-md-4 col-lg-4 mb-4">
-                            <img alt="Image" src="/static/img/welcome/step-1.jpg" class="w-100" />
+                            <img alt="Image" src="{{ static('img/welcome/step-1.jpg') }}" class="w-100" />
                           </div>
                           <!--end of col-->
                           <div class="col-12 col-md-8 col-lg-8 mb-4">
@@ -88,7 +88,7 @@
                       <div id="second">
                         <div class="row justify-content-around align-items-center">
                           <div class="col-4 col-md-4 col-lg-4 mb-4">
-                            <img alt="Image" src="/static/img/welcome/step-2.jpg" class="w-100" />
+                            <img alt="Image" src="{{ static('img/welcome/step-2.jpg') }}" class="w-100" />
                           </div>
                           <!--end of col-->
                           <div class="col-12 col-md-8 col-lg-8 mb-4">
@@ -113,7 +113,7 @@
                         <div class="row justify-content-around align-items-center">
                           {# TODO: readd images to the last 2 steps #}
                           {# <div class="col-4 col-md-4 col-lg-4 mb-4">
-                            <img alt="Image" src="/static/img/graphic-man-box.svg" class="w-100" />
+                            <img alt="Image" src="{{ static('img/graphic-man-box.svg') }}" class="w-100" />
                           </div> #}
                           <!--end of col-->
                           <div class="col-12 col-md-8 col-lg-8 mb-4">
@@ -182,7 +182,7 @@ await peerMetrics.initialize()</code></pre>
                       <div id="fourth">
                         <div class="row justify-content-around align-items-center">
                           {# <div class="col-8 col-md-6 col-lg-5 mb-4">
-                            <img alt="Image" src="/static/img/graphic-man-computer.svg" class="w-100" />
+                            <img alt="Image" src="{{ static('img/graphic-man-computer.svg') }}" class="w-100" />
                           </div> #}
                           <!--end of col-->
                           <div class="col-12 col-md-6 col-lg-5 mb-4">
@@ -220,15 +220,15 @@ await peerMetrics.initialize()</code></pre>
 {% endblock %}
 
 {% block scripts %}
-  <script src="/static/libs/prism/prism.js"></script>
+  <script src="{{ static('libs/prism/prism.js') }}"></script>
 
   {% if DEV %}
-    <script src="/static/node_modules/smartwizard/dist/js/jquery.smartWizard.min.js"></script>
+    <script src="{{ static('node_modules/smartwizard/dist/js/jquery.smartWizard.min.js') }}"></script>
   {% else %}
     <script src="https://cdn.jsdelivr.net/npm/smartwizard@4.4.1/dist/js/jquery.smartWizard.min.js" integrity="sha256-uSROG3lBu3YW4HUkG1YPq1wvjHsBDmc2pf9UQ73XxbA=" crossorigin="anonymous"></script>
   {% endif %}
 
-  <script src="/static/js/welcome.js"></script>
+  <script src="{{ static('js/welcome.js') }}"></script>
 {% endblock %}
 
 {# override the footer block #}

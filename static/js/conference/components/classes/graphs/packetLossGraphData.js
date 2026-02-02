@@ -3,7 +3,6 @@ import {
   TOPICS,
   CONNECTION,
   POSITIONS,
-  Stat,
   INBOUND,
   OUTBOUND,
 } from "../shared";

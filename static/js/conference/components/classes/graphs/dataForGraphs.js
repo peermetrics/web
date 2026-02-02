@@ -1,5 +1,3 @@
-import { Stat } from '../shared';
-
 class DataForGraphs {
   /**
    * 
