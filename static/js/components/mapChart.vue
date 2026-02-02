@@ -80,7 +80,10 @@ export default {
       if (this.dataSeries.citySeries.length === 0) return
 
       if (!this.countries) {
-        this.countries = await wretch('/static/data/countries.json').get().json()
+        const prefix = (window.peermetrics && window.peermetrics.settings && window.peermetrics.settings.urlPrefix) || ''
+        const normalizedPrefix = prefix === '/' ? '' : (prefix.endsWith('/') ? prefix.slice(0, -1) : prefix)
+        const countriesUrl = `${normalizedPrefix}/static/data/countries.json`
+        this.countries = await wretch(countriesUrl).get().json()
       }
 
       if (this.map) {

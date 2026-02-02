@@ -9,8 +9,8 @@
     <div class="container">
       <div class="row mb-4">
         <div class="col text-center">
-          <a href="/">
-            <img class="logo" src="/static/img/logo-icon.png" alt="Peermetrics Logo" />
+          <a href="{{ url('home') }}">
+            <img class="logo" src="{{ static('img/logo-icon.png') }}" alt="Peermetrics Logo" />
           </a>
           <h2 class="mt-4">Login to Peermetrics</h2>
         </div>
@@ -66,7 +66,7 @@
           </div>
 
           <div class="text-center mt-2">
-            <a href="/" class="card-link">
+            <a href="{{ url('home') }}" class="card-link">
               <small>Back to Home</small>
             </a>
           </div>

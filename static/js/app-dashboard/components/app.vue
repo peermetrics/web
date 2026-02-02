@@ -67,7 +67,7 @@
             There is not data to display yet. Start collecting metrics by adding peer metrics to your app.
           </p>
           <p>
-            You can find all the details in our <a href="/docs">docs</a> on how to integrate with your favourite SDK or use it directly.
+            You can find all the details in our <a :href="docsPath">docs</a> on how to integrate with your favourite SDK or use it directly.
           </p>
         </div>
       </div>
@@ -163,6 +163,19 @@ export default {
       countries: [],
       selectedCountry: '',
     };
+  },
+
+  computed: {
+    docsPath() {
+      if (window.peermetrics && typeof window.peermetrics.createPath === 'function') {
+        try {
+          return window.peermetrics.createPath('docs')
+        } catch (e) {
+          return '/docs'
+        }
+      }
+      return '/docs'
+    }
   },
 
   async created() {

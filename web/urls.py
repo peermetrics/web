@@ -5,11 +5,22 @@ from django.conf.urls.static import static
 
 from app.views.warmup import WarmupView
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('_ah/warmup/', WarmupView.as_view(), name='warmup'),
-    path('', include('app.urls')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+prefix = settings.URL_PREFIX.strip('/') if getattr(settings, 'URL_PREFIX', '') else ''
+
+if prefix:
+    urlpatterns = [
+        path(f'{prefix}/admin/', admin.site.urls),
+        path(f'{prefix}/_ah/warmup/', WarmupView.as_view(), name='warmup'),
+        path(f'{prefix}/', include('app.urls')),
+    ]
+else:
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('_ah/warmup/', WarmupView.as_view(), name='warmup'),
+        path('', include('app.urls')),
+    ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Custom error handlers
 handler404 = 'app.errors.handler404'

@@ -10,9 +10,6 @@ import AverageDecodingTimeGraphData from "./graphs/averageDecodingTimeGraphData"
 import {
   POSITIONS,
   TOPICS,
-  Stat,
-  GraphDatum,
-  groupByCallback,
   CONNECTION,
 } from "./shared";
 
