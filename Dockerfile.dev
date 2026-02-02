@@ -16,7 +16,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apk add --update --no-cache --virtual .tmp-build-deps \
     gcc libc-dev linux-headers postgresql-dev \
-    && apk add libffi-dev
+    && apk add libffi-dev nodejs npm
 
 # install dependencies
 RUN pip install --upgrade pip
