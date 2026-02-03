@@ -1,11 +1,10 @@
 argon2-cffi
-Django>=3.2,<4.0
+Django<3.0
 django-ratelimit
 gunicorn
-PyJWT>=2.4.0,<3
+PyJWT==1.7.1
 psycopg2-binary
-validators>=0.22,<1
+validators==0.14.2
 
-Jinja2>=3.0.3
-whitenoise==6.6.0
+Jinja2
 # pytz
