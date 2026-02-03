@@ -2,11 +2,11 @@
 
 node_modules/
 
-# built web js files
+# --- static/ build output (CI runs npm run build before Docker build) ---
+# Vite: static/js/{app-dashboard,conference,participant}/index.js or index.min.js
 static/js/**/index.js
-
-# sourcemaps
-static/**/*.js.map
-
-# css files
+static/js/**/index.min.js
+# Sass: static/css/main.css from main.scss
 static/css/main.css
+# Sourcemaps
+static/**/*.js.map

@@ -1,5 +1,5 @@
 # base image
-FROM python:3.8-alpine
+FROM python:3.11-alpine
 
 # setup environment variable
 ENV DockerHOME=/app/
