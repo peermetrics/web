@@ -257,30 +257,19 @@ export default {
             const allParticipants = participants.map((participant) => {
               return {
                 ...participant,
-                // rename these attributes
                 participantId: participant.participant_id,
                 name: participant.participant_name,
                 sessions: groupedSessions[participant.id] || [],
               };
             });
 
-            // Filter out duplicate participants that have no sessions.
-            // This happens when WebRTC libraries (e.g. Jitsi) create multiple
-            // PeerConnections for the same remote user (one for P2P, one for
-            // SFU). The wrapPeerConnection approach reports each as a separate
-            // peer, but only the active connection will have session data.
-            // SFU participants (is_sfu=true) are always kept.
-            const participantsWithSessions = allParticipants.filter(
+            // Filter out participants with no sessions to avoid duplicates
+            const active = allParticipants.filter(
               (p) => p.sessions.length > 0 || p.is_sfu
             );
 
-            // Only apply the filter if it wouldn't remove all participants
-            // (e.g. in case of an ongoing conference where sessions haven't
-            // been created yet)
             this.participants = Object.freeze(
-              participantsWithSessions.length > 0
-                ? participantsWithSessions
-                : allParticipants
+              active.length > 0 ? active : allParticipants
             );
           });
         }
