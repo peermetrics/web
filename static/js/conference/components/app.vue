@@ -263,13 +263,10 @@ export default {
               };
             });
 
-            // Filter out participants with no sessions to avoid duplicates
-            const active = allParticipants.filter(
-              (p) => p.sessions.length > 0 || p.is_sfu
-            );
-
+            // Deduplicate participants that appear multiple times due to
+            // multiple PeerConnections (e.g. P2P + JVB in Jitsi)
             this.participants = Object.freeze(
-              active.length > 0 ? active : allParticipants
+              this.deduplicateParticipants(allParticipants)
             );
           });
         }
@@ -289,6 +286,27 @@ export default {
   },
 
   methods: {
+    /**
+     * Merge participants that share the same name within a conference.
+     * Combines their sessions into a single entry.
+     */
+    deduplicateParticipants(participants) {
+      const merged = {};
+
+      for (const p of participants) {
+        const key = p.name || p.participantId;
+
+        if (!merged[key]) {
+          merged[key] = { ...p };
+        } else {
+          // Merge sessions from the duplicate into the first occurrence
+          merged[key].sessions = merged[key].sessions.concat(p.sessions);
+        }
+      }
+
+      return Object.values(merged);
+    },
+
     async loadEventsWithStats () {
       try {
         // get all stats events
