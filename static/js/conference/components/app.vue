@@ -294,17 +294,22 @@ export default {
       const merged = {};
 
       for (const p of participants) {
+        // Skip participants with no sessions and no display name
+        if (p.sessions.length === 0 && !p.name && !p.is_sfu) {
+          continue;
+        }
+
         const key = p.name || p.participantId;
 
         if (!merged[key]) {
           merged[key] = { ...p };
         } else {
-          // Merge sessions from the duplicate into the first occurrence
           merged[key].sessions = merged[key].sessions.concat(p.sessions);
         }
       }
 
-      return Object.values(merged);
+      const result = Object.values(merged);
+      return result.length > 0 ? result : participants;
     },
 
     async loadEventsWithStats () {
