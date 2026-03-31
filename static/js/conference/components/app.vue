@@ -291,24 +291,22 @@ export default {
      * Combines their sessions into a single entry.
      */
     deduplicateParticipants(participants) {
-      const merged = {};
+      const withSessions = [];
+      const withoutSessions = [];
 
       for (const p of participants) {
-        // Skip participants with no sessions and no display name
-        if (p.sessions.length === 0 && !p.name && !p.is_sfu) {
-          continue;
-        }
-
-        const key = p.name || p.participantId;
-
-        if (!merged[key]) {
-          merged[key] = { ...p };
-        } else {
-          merged[key].sessions = merged[key].sessions.concat(p.sessions);
+        if (p.sessions.length > 0 || p.is_sfu) {
+          withSessions.push(p);
+        } else if (p.name) {
+          withoutSessions.push(p);
         }
       }
 
-      const result = Object.values(merged);
+      // Only keep no-session participants if no other participant shares their name
+      const namesWithSessions = new Set(withSessions.map((p) => p.name));
+      const unique = withoutSessions.filter((p) => !namesWithSessions.has(p.name));
+
+      const result = withSessions.concat(unique);
       return result.length > 0 ? result : participants;
     },
 
