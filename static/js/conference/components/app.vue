@@ -254,16 +254,19 @@ export default {
       .then((participants) => {
         if (participants) {
           sessionsProm.then((groupedSessions) => {
+            const allParticipants = participants.map((participant) => {
+              return {
+                ...participant,
+                participantId: participant.participant_id,
+                name: participant.participant_name,
+                sessions: groupedSessions[participant.id] || [],
+              };
+            });
+
+            // Deduplicate participants that appear multiple times due to
+            // multiple PeerConnections (e.g. P2P + JVB in Jitsi)
             this.participants = Object.freeze(
-              participants.map((participant) => {
-                return {
-                  ...participant,
-                  // rename these attributes
-                  participantId: participant.participant_id,
-                  name: participant.participant_name,
-                  sessions: groupedSessions[participant.id] || [],
-                };
-              })
+              this.deduplicateParticipants(allParticipants)
             );
           });
         }
@@ -283,6 +286,30 @@ export default {
   },
 
   methods: {
+    /**
+     * Merge participants that share the same name within a conference.
+     * Combines their sessions into a single entry.
+     */
+    deduplicateParticipants(participants) {
+      const withSessions = [];
+      const withoutSessions = [];
+
+      for (const p of participants) {
+        if (p.sessions.length > 0 || p.is_sfu) {
+          withSessions.push(p);
+        } else if (p.name) {
+          withoutSessions.push(p);
+        }
+      }
+
+      // Only keep no-session participants if no other participant shares their name
+      const namesWithSessions = new Set(withSessions.map((p) => p.name));
+      const unique = withoutSessions.filter((p) => !namesWithSessions.has(p.name));
+
+      const result = withSessions.concat(unique);
+      return result.length > 0 ? result : participants;
+    },
+
     async loadEventsWithStats () {
       try {
         // get all stats events

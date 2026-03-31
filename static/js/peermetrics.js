@@ -247,14 +247,14 @@
       var values = result.slice()
       var intervalsArray = intervals.slice()
 
-      // filter out NaN
-      // and sort the numbers
-      values = values.filter((val) => typeof val === 'object' && !Number.isNaN(val.value))
+      // filter out NaN and negative values, then sort
+      values = values.filter((val) => typeof val === 'object' && !Number.isNaN(val.value) && val.value >= 0)
                      .sort((first, second) => first.value - second.value)
 
       var i = 0
       return intervalsArray.map((interval) => {
         var newInterval = Object.assign({}, interval)
+        newInterval.data = []
         var res = values[i]?.value
 
         while (res >= newInterval.min && res < newInterval.max && i < values.length) {
