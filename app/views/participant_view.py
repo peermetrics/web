@@ -20,7 +20,11 @@ class ParticipantView(View):
 
         data_retention_days = 30
 
-        organization = participant.conference.app.organization
+        conference = participant.conferences.select_related('app__organization').first()
+        if not conference:
+            return HttpResponseRedirect(reverse('dashboard'))
+
+        organization = conference.app.organization
         if request.user.organization != organization:
             return HttpResponseForbidden('You do not have permission to access this participant.')
 
