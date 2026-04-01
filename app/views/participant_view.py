@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, reverse
-from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 
@@ -20,7 +19,7 @@ class ParticipantView(View):
 
         data_retention_days = 30
 
-        organization = participant.conference.app.organization
+        organization = participant.app.organization
         if request.user.organization != organization:
             return HttpResponseForbidden('You do not have permission to access this participant.')
 
