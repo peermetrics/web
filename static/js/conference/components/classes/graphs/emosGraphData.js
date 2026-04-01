@@ -27,9 +27,7 @@ class EmosGraphData extends DataForGraphs {
         data[stat.connection] = []
       }
 
-      // for the moment we only compute for audio tracks
       let yPoint = stat.data.audio[INBOUND].reduce((score, audioStat) => {
-        // if we have the emos for audio tracks
         if (audioStat.emos) {
           if (score) {
             return (score + audioStat.emos ) / 2
@@ -38,7 +36,7 @@ class EmosGraphData extends DataForGraphs {
           }
         }
 
-        return 0
+        return score
       }, 0)
 
 
