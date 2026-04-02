@@ -290,6 +290,8 @@ export default {
         let location = null
         if (item.geo_ip.city && item.geo_ip.country_code) {
           location = `${item.geo_ip.city}, ${item.geo_ip.country_code}`
+        } else if (item.geo_ip.country_code) {
+          location = item.geo_ip.country_code
         }
 
         return {
