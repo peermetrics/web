@@ -191,8 +191,13 @@ export default {
   },
 
   async created() {
+    const since = new Date();
+    since.setDate(since.getDate() - peermetrics.daysHistory);
+    const created_at_gte = since.toISOString();
+
     this.data.issues = await peermetrics.get(peermetrics.urls.issues(), {
-      appId: peermetrics.app.id
+      appId: peermetrics.app.id,
+      created_at_gte,
     }).catch(e => {
       console.warn(e)
     });
@@ -202,7 +207,8 @@ export default {
     }
 
     this.data.conferences = await peermetrics.get(peermetrics.urls.conferences(), {
-      appId: peermetrics.app.id
+      appId: peermetrics.app.id,
+      created_at_gte,
     }).catch(e => {
       console.warn(e)
     });
@@ -215,17 +221,19 @@ export default {
     await this.fetchConferences();
 
     this.data.sessions = await peermetrics.get(peermetrics.urls.sessions, {
-      appId: peermetrics.app.id
+      appId: peermetrics.app.id,
+      created_at_gte,
     })
     .catch(e => console.warn(e));
-    
+
     if(this.data.sessions) {
       this.data.sessions = peermetrics.utils.populateIssues(this.data.sessions, this.data.issues)
       this.sessions = Object.freeze(this.data.sessions);
     }
 
     this.data.connections = await peermetrics.get(peermetrics.urls.connections(), {
-      appId: peermetrics.app.id
+      appId: peermetrics.app.id,
+      created_at_gte,
     })
     .catch(e => {
       console.warn(e)
