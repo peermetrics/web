@@ -140,7 +140,7 @@ export default {
       // if an sfu, show all conferences that had at least one issue
       if (this.isSfu) {
         return this.conferences.filter((conference) => {
-          return conference.issues.length
+          return conference.issues && conference.issues.length
         })
       }
 
