@@ -117,7 +117,14 @@
         />
       </div>
       <div class="tab-pane fade" id="conferences" role="tabpanel" aria-labelledby="conferences-tab">
-        <conferences-tab :conferences="conferences" />
+        <conferences-tab
+          :conferences="paginatedConferences"
+          :total-count="conferencesCount"
+          :current-page="conferencesPage"
+          :per-page="conferencesPerPage"
+          :loading="conferencesLoading"
+          @page-changed="fetchConferences"
+        />
       </div>
     </div>
   </div>
@@ -147,6 +154,11 @@ export default {
       data: {},
 
       conferences: null,
+      paginatedConferences: null,
+      conferencesCount: 0,
+      conferencesPage: 1,
+      conferencesPerPage: 20,
+      conferencesLoading: false,
       sessions: null,
       connections: null,
       issues: null,
@@ -179,8 +191,13 @@ export default {
   },
 
   async created() {
+    const since = new Date();
+    since.setDate(since.getDate() - peermetrics.daysHistory);
+    const created_at_gte = since.toISOString();
+
     this.data.issues = await peermetrics.get(peermetrics.urls.issues(), {
-      appId: peermetrics.app.id
+      appId: peermetrics.app.id,
+      created_at_gte,
     }).catch(e => {
       console.warn(e)
     });
@@ -190,9 +207,9 @@ export default {
     }
 
     this.data.conferences = await peermetrics.get(peermetrics.urls.conferences(), {
-      appId: peermetrics.app.id
-    })
-    .catch(e => {
+      appId: peermetrics.app.id,
+      created_at_gte,
+    }).catch(e => {
       console.warn(e)
     });
 
@@ -201,18 +218,22 @@ export default {
       this.conferences = Object.freeze(this.data.conferences);
     }
 
+    await this.fetchConferences();
+
     this.data.sessions = await peermetrics.get(peermetrics.urls.sessions, {
-      appId: peermetrics.app.id
+      appId: peermetrics.app.id,
+      created_at_gte,
     })
     .catch(e => console.warn(e));
-    
+
     if(this.data.sessions) {
       this.data.sessions = peermetrics.utils.populateIssues(this.data.sessions, this.data.issues)
       this.sessions = Object.freeze(this.data.sessions);
     }
 
     this.data.connections = await peermetrics.get(peermetrics.urls.connections(), {
-      appId: peermetrics.app.id
+      appId: peermetrics.app.id,
+      created_at_gte,
     })
     .catch(e => {
       console.warn(e)
@@ -289,6 +310,26 @@ export default {
   methods: {
     extractValues (object) {
       return Object.values(object).sort((a, b) => a.value > b.value ? 1 : -1)
+    },
+
+    async fetchConferences(page) {
+      if (page) this.conferencesPage = page;
+      this.conferencesLoading = true;
+      const offset = (this.conferencesPage - 1) * this.conferencesPerPage;
+      try {
+        const response = await peermetrics.get(peermetrics.urls.conferences(), {
+          appId: peermetrics.app.id,
+          limit: this.conferencesPerPage,
+          offset: offset,
+        });
+        if (response) {
+          this.paginatedConferences = Object.freeze(response.results || []);
+          this.conferencesCount = response.count || 0;
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+      this.conferencesLoading = false;
     },
 
     applyFilters () {

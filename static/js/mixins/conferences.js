@@ -28,10 +28,10 @@ const conferencesFunctions = {
       return !!conference.conference_name;
     },
     hasError(conference) {
-      return conference.issues.some((issue) => issue.type === 'error')
+      return conference.issues && conference.issues.some((issue) => issue.type === 'error')
     },
     hasWarning(conference) {
-      return conference.issues.some((issue) => issue.type === 'warning')
+      return conference.issues && conference.issues.some((issue) => issue.type === 'warning')
     },
     createPath(conference) {
       return peermetrics.createPath('conference', conference.id)
