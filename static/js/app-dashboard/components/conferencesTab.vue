@@ -20,6 +20,17 @@
               <span v-else class="text-muted">No conference name,</span>
               <span class="text-muted">{{ conference.conference_id }}</span>
             </div>
+
+            <i
+              v-if="conference.has_errors"
+              class="icon-cross text-danger"
+              title="We detected errors for this conference."
+            ></i>
+            <i
+              v-else-if="conference.has_warnings"
+              class="icon-warning text-warning"
+              title="There are some warnings for this conference."
+            ></i>
           </a>
         </div>
 
