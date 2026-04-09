@@ -90,7 +90,7 @@ export default {
   methods: {
     onChartClick(e) {
       this.modalConferences = this.conferences.filter((conf) => {
-        return conf.issues.some((issue) => issue.code === this.seriesData.find(s => s.y === e.yValue).issueCode)
+        return conf.issues && conf.issues.some((issue) => issue.code === this.seriesData.find(s => s.y === e.yValue).issueCode)
       });
       this.$refs["conferencesModal"].show();
     }
