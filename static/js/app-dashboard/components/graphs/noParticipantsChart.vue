@@ -31,7 +31,7 @@ export default {
   computed: {
     dataSeries() {
       let arr = this.conferences.map(conf => {
-        return conf.participants.length;
+        return conf.participants ? conf.participants.length : 0;
       });
       let participants = peermetrics.utils.reduce(arr);
       let conferencesCount = this.conferences.length;
