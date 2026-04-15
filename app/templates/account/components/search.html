@@ -49,7 +49,12 @@
             // the enter key
             if (ev.which === 13) {
                 ev.preventDefault()
-                query(searchInput.val())
+                var val = searchInput.val().trim()
+                if (!val) {
+                    searchResults.removeClass('show')
+                    return
+                }
+                query(val)
             }
         })
     })
