@@ -3,7 +3,7 @@
     <div class="dropdown w-100">
         <input id="search-input" class="form-control w-100" type="search" placeholder="Search by participant ID, conference ID, etc." aria-label="Search" aria-haspopup="true">
         <div id="search-results" class="dropdown-menu w-100">
-            
+
         </div>
     </div>
 </form>
@@ -13,19 +13,26 @@
         var searchInput = $('#search-input')
         var searchResults = $('#search-results')
 
+        var MIN_QUERY_LENGTH = 2
+        var DEBOUNCE_MS = 300
+
+        var debounceTimer = null
+        var latestQuery = null
+
         var query = function (val) {
-            searchInput.attr('disabled', true).removeClass('is-invalid')
-            console.log(val)
+            latestQuery = val
+            searchInput.removeClass('is-invalid')
 
             peermetrics.get(peermetrics.urls['search'], {
                 query: val
             }).then(function (res) {
-                console.log(res)
+                if (latestQuery !== val) return
+
                 res = res.matches
                 if (res && res.length) {
                     searchResults.html(res.map(function (result) {
                         return `<a class="dropdown-item" href="${result.url}">
-                                    ${result.name ? result.name + ',' : ''} ${result.id}, 
+                                    ${result.name ? result.name + ',' : ''} ${result.id},
                                     <span class="text-muted">${result.type}</span>
                                 </a>`
                     }))
@@ -33,28 +40,41 @@
                     searchResults.html('<p class="dropdown-header">Could not find any results for this query</p>')
                 }
                 searchResults.addClass('show')
-                searchInput.one('blur', function (ev) {
+                searchInput.one('blur', function () {
                     searchResults.removeClass('show')
                 })
-
-            }).catch(function (res) {
+            }).catch(function () {
+                if (latestQuery !== val) return
                 searchInput.addClass('is-invalid')
-            }).finally(function () {
-                searchInput.attr('disabled', false)
             })
         }
 
-        searchInput.on('keydown', function (ev) {
+        var fire = function () {
+            clearTimeout(debounceTimer)
+            debounceTimer = null
+            var val = searchInput.val().trim()
+            if (val.length < MIN_QUERY_LENGTH) {
+                searchResults.removeClass('show')
+                return
+            }
+            query(val)
+        }
 
-            // the enter key
+        searchInput.on('input', function () {
+            clearTimeout(debounceTimer)
+            var val = searchInput.val().trim()
+            if (val.length < MIN_QUERY_LENGTH) {
+                latestQuery = null
+                searchResults.removeClass('show')
+                return
+            }
+            debounceTimer = setTimeout(fire, DEBOUNCE_MS)
+        })
+
+        searchInput.on('keydown', function (ev) {
             if (ev.which === 13) {
                 ev.preventDefault()
-                var val = searchInput.val().trim()
-                if (!val) {
-                    searchResults.removeClass('show')
-                    return
-                }
-                query(val)
+                fire()
             }
         })
     })
