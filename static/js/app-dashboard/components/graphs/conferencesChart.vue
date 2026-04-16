@@ -59,28 +59,32 @@ export default {
     summaryByDate() {
       const out = {};
       this.summary.forEach((row) => {
-        const label = moment(row.date).format("MM/DD");
-        out[label] = row;
+        out[row.date] = row;
       });
       return out;
     },
 
     seriesData() {
-      let dates = [];
-      let now = moment();
+      // Build parallel arrays: ISO date (unambiguous across years) for
+      // lookup/click handling, and MM/DD for display on the x-axis.
+      const isoDates = [];
+      const displayDates = [];
+      const day = moment();
       for (let i = 0; i <= peermetrics.daysHistory; i++) {
-        dates.push(now.format("MM/DD"));
-        now.subtract(1, "days");
+        isoDates.push(day.format("YYYY-MM-DD"));
+        displayDates.push(day.format("MM/DD"));
+        day.subtract(1, "days");
       }
-      dates.reverse();
+      isoDates.reverse();
+      displayDates.reverse();
 
       const succSeriesData = [];
       const warnSeriesData = [];
       const errSeriesData = [];
       const ongSeriesData = [];
 
-      dates.forEach((date) => {
-        const row = this.summaryByDate[date];
+      isoDates.forEach((iso) => {
+        const row = this.summaryByDate[iso];
         succSeriesData.push(row ? row.success : 0);
         warnSeriesData.push(row ? row.warning : 0);
         errSeriesData.push(row ? row.error : 0);
@@ -88,7 +92,8 @@ export default {
       });
 
       return {
-        dates,
+        dates: displayDates,
+        isoDates,
         succSeriesData,
         warnSeriesData,
         errSeriesData,
@@ -153,26 +158,50 @@ export default {
       const statusKey = SERIES_TO_STATUS_KEY[e.label];
       if (!statusKey) return;
 
-      // Fetch only the clicked day's conferences via the paginated list
-      const day = moment(e.xValue, "MM/DD").year(moment().year());
+      // Resolve the clicked bar to its full ISO date via the parallel array
+      // built in seriesData. Using the label index avoids the year-boundary
+      // bug where "12/31" in early January would otherwise resolve to the
+      // current year instead of the previous year.
+      const idx = this.seriesData.dates.indexOf(e.xValue);
+      if (idx === -1) return;
+      const isoDate = this.seriesData.isoDates[idx];
+      const day = moment(isoDate);
       const dayStart = day.clone().startOf("day").toISOString();
       const dayEnd = day.clone().endOf("day").toISOString();
 
       try {
-        const res = await peermetrics.get(peermetrics.urls.conferences(), {
-          appId: peermetrics.app.id,
-          created_at_gte: dayStart,
-          created_at_lte: dayEnd,
-          limit: 50,
-        });
-        const confs = res.results || res || [];
-        this.modalConferences = this.filterByStatus(confs, statusKey);
+        this.modalConferences = await this.fetchAllConferencesForDay(dayStart, dayEnd, statusKey);
       } catch (err) {
         console.warn(err);
         this.modalConferences = [];
       }
 
       this.$refs["conferencesModal"].show();
+    },
+
+    async fetchAllConferencesForDay(dayStart, dayEnd, statusKey) {
+      // Paginate through every conference for the day so the modal count
+      // matches the chart bar on high-volume days (API list max limit is 200).
+      const PAGE_SIZE = 200;
+      const out = [];
+      let offset = 0;
+      let total = Infinity;
+
+      while (offset < total) {
+        const res = await peermetrics.get(peermetrics.urls.conferences(), {
+          appId: peermetrics.app.id,
+          created_at_gte: dayStart,
+          created_at_lte: dayEnd,
+          limit: PAGE_SIZE,
+          offset,
+        });
+        const page = res.results || [];
+        total = typeof res.count === "number" ? res.count : page.length;
+        out.push(...this.filterByStatus(page, statusKey));
+        if (page.length === 0) break;
+        offset += page.length;
+      }
+      return out;
     },
 
     filterByStatus(conferences, statusKey) {
