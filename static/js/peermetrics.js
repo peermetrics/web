@@ -47,6 +47,7 @@
         return '/conferences'
       }
     },
+    conferencesSummary: '/conferences/summary',
     conferenceEvents: function (conferenceId) {
       if (!conferenceId) {
         throw new Error('Missing conferenceId')

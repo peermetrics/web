@@ -1,6 +1,7 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="isEmpty" />
+    <Loader v-if="loading" />
+    <NoDataMessage v-else-if="isEmpty" />
     <bar-chart
         v-else
         id="conferences-chartjs"
@@ -21,114 +22,78 @@
 <script>
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import ConferenceListModal from "../../../components/conferenceListModal.vue";
-
-import conferencesFunctions from "../../../mixins/conferences";
+import Loader from "../../../components/loader.vue";
 import BarChart from "../../../components/barChart.vue";
+
+const SERIES_TO_STATUS_KEY = {
+  Successful: "success",
+  Warnings: "warning",
+  Errors: "error",
+  Ongoing: "ongoing",
+};
+
+const STATUS_KEY_TO_API = {
+  warning: "warning",
+  error: "error",
+  ongoing: "ongoing",
+  // success is derived — no direct API filter
+};
 
 export default {
   name: "conferences-chart",
-  props: {
-    conferences: {
-      type: Array,
-      required: true,
-    },
-  },
   components: {
     BarChart,
     NoDataMessage,
-    ConferenceListModal
+    ConferenceListModal,
+    Loader,
   },
   data() {
     return {
+      loading: true,
+      summary: [],
       modalConferences: [],
     };
   },
 
-  mixins: [conferencesFunctions],
-
   computed: {
-    /**
-     * Used to group the conferences by day
-     * It also looks to see if they have warnings or erros on them
-     * receives the list of conferences for a timeframe
-     * @return {Object}
-     */
-    groupedConferences() {
-      return this.conferences.reduce(
-        (result, conference) => {
-          let date = moment(conference.created_at).format("MM/DD");
-
-          let hasWarning = this.hasWarning(conference)
-          let hasError = this.hasError(conference)
-
-          if (conference.ongoing === true) {
-            (result.ongoing[date] = result.ongoing[date] || []).push(
-              conference
-            );
-          } else if (hasError) {
-            (result.error[date] = result.error[date] || []).push(conference);
-          } else if (hasWarning) {
-            (result.warning[date] = result.warning[date] || []).push(
-              conference
-            );
-          } else {
-            (result.success[date] = result.success[date] || []).push(
-              conference
-            );
-          }
-
-          return result;
-        },
-        {
-          success: {},
-          warning: {},
-          error: {},
-          ongoing: {},
-        }
-      );
+    summaryByDate() {
+      const out = {};
+      this.summary.forEach((row) => {
+        out[row.date] = row;
+      });
+      return out;
     },
 
     seriesData() {
-      let succ = this.groupedConferences.success;
-      let warn = this.groupedConferences.warning;
-      let err = this.groupedConferences.error;
-      let ong = this.groupedConferences.ongoing;
-
-      let dates = [];
-      let succSeriesData = [];
-      let warnSeriesData = [];
-      let errSeriesData = [];
-      let ongSeriesData = [];
-      let now = moment();
-
+      // Build parallel arrays: ISO date (unambiguous across years) for
+      // lookup/click handling, and MM/DD for display on the x-axis.
+      const isoDates = [];
+      const displayDates = [];
+      const day = moment();
       for (let i = 0; i <= peermetrics.daysHistory; i++) {
-        dates.push(now.format("MM/DD"));
-        now.subtract(1, "days");
+        isoDates.push(day.format("YYYY-MM-DD"));
+        displayDates.push(day.format("MM/DD"));
+        day.subtract(1, "days");
       }
-      dates.reverse();
+      isoDates.reverse();
+      displayDates.reverse();
 
-      dates.forEach((date) => {
-        let num = succ[date] ? succ[date].length : 0;
-        succSeriesData.push(num);
-      });
+      const succSeriesData = [];
+      const warnSeriesData = [];
+      const errSeriesData = [];
+      const ongSeriesData = [];
 
-      dates.forEach((date) => {
-        let num = warn[date] ? warn[date].length : 0;
-        warnSeriesData.push(num);
-      });
-
-      dates.forEach((date) => {
-        let num = err[date] ? err[date].length : 0;
-        errSeriesData.push(num);
-      });
-
-      dates.forEach((date) => {
-        let num = ong[date] ? ong[date].length : 0;
-        ongSeriesData.push(num);
+      isoDates.forEach((iso) => {
+        const row = this.summaryByDate[iso];
+        succSeriesData.push(row ? row.success : 0);
+        warnSeriesData.push(row ? row.warning : 0);
+        errSeriesData.push(row ? row.error : 0);
+        ongSeriesData.push(row ? row.ongoing : 0);
       });
 
       return {
-        dates,
+        dates: displayDates,
+        isoDates,
         succSeriesData,
         warnSeriesData,
         errSeriesData,
@@ -162,26 +127,94 @@ export default {
     },
 
     isEmpty() {
-      return Object.keys(this.groupedConferences.success).length < 1 &&
-          Object.keys(this.groupedConferences.warning).length < 1 &&
-          Object.keys(this.groupedConferences.error).length < 1 &&
-          Object.keys(this.groupedConferences.ongoing).length < 1;
+      return this.summary.length === 0;
     },
   },
 
-  methods: {
-    onChartClick(e) {
-      const seriesNameToKey = {
-        Successful: "success",
-        Warnings: "warning",
-        Errors: "error",
-        Ongoing: "ongoing",
-      }[e.label];
+  async mounted() {
+    await this.fetchSummary();
+  },
 
-      this.modalConferences = this.groupedConferences?.[seriesNameToKey]?.[e.xValue] ?? [];
+  methods: {
+    async fetchSummary() {
+      this.loading = true;
+      try {
+        const since = new Date();
+        since.setDate(since.getDate() - peermetrics.daysHistory);
+        const res = await peermetrics.get(peermetrics.urls.conferencesSummary, {
+          appId: peermetrics.app.id,
+          created_at_gte: since.toISOString(),
+        });
+        // peermetrics.get() auto-unwraps response.data, so res is already the array
+        this.summary = Object.freeze(Array.isArray(res) ? res : (res.data || []));
+      } catch (e) {
+        console.warn(e);
+        this.summary = [];
+      }
+      this.loading = false;
+    },
+
+    async onChartClick(e) {
+      const statusKey = SERIES_TO_STATUS_KEY[e.label];
+      if (!statusKey) return;
+
+      // Resolve the clicked bar to its full ISO date via the parallel array
+      // built in seriesData. Using the label index avoids the year-boundary
+      // bug where "12/31" in early January would otherwise resolve to the
+      // current year instead of the previous year.
+      const idx = this.seriesData.dates.indexOf(e.xValue);
+      if (idx === -1) return;
+      const isoDate = this.seriesData.isoDates[idx];
+      const day = moment(isoDate);
+      const dayStart = day.clone().startOf("day").toISOString();
+      const dayEnd = day.clone().endOf("day").toISOString();
+
+      try {
+        this.modalConferences = await this.fetchAllConferencesForDay(dayStart, dayEnd, statusKey);
+      } catch (err) {
+        console.warn(err);
+        this.modalConferences = [];
+      }
+
       this.$refs["conferencesModal"].show();
-    }
-  }
+    },
+
+    async fetchAllConferencesForDay(dayStart, dayEnd, statusKey) {
+      // Paginate through every conference for the day so the modal count
+      // matches the chart bar on high-volume days (API list max limit is 200).
+      const PAGE_SIZE = 200;
+      const out = [];
+      let offset = 0;
+      let total = Infinity;
+
+      while (offset < total) {
+        const res = await peermetrics.get(peermetrics.urls.conferences(), {
+          appId: peermetrics.app.id,
+          created_at_gte: dayStart,
+          created_at_lte: dayEnd,
+          limit: PAGE_SIZE,
+          offset,
+        });
+        const page = res.results || [];
+        total = typeof res.count === "number" ? res.count : page.length;
+        out.push(...this.filterByStatus(page, statusKey));
+        if (page.length === 0) break;
+        offset += page.length;
+      }
+      return out;
+    },
+
+    filterByStatus(conferences, statusKey) {
+      return conferences.filter((c) => {
+        if (statusKey === "ongoing") return !!c.ongoing;
+        if (c.ongoing) return false;
+        if (statusKey === "error") return !!c.has_errors;
+        if (statusKey === "warning") return !c.has_errors && !!c.has_warnings;
+        if (statusKey === "success") return !c.has_errors && !c.has_warnings;
+        return false;
+      });
+    },
+  },
 };
 </script>
 
