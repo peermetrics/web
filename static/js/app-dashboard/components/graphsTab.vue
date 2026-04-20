@@ -3,24 +3,21 @@
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Conferences</p>
-        <Loader v-if="conferences == null" />
-        <conferences-chart v-else :conferences="conferences" />
+        <conferences-chart />
       </div>
     </div>
 
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Most common issues</p>
-        <Loader v-if="(issues == null || conferences == null)" />
-        <most-common-issues-chart v-else :issues="issues" :conferences="conferences" />
+        <most-common-issues-chart />
       </div>
     </div>
 
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Errors getting access to media</p>
-        <Loader v-if="issues == null" />
-        <gum-chart v-else :issues="gumIssues" />
+        <gum-chart />
       </div>
       <div class="col">
         <p class="lead">Relayed connections</p>
@@ -32,11 +29,7 @@
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Conference duration</p>
-        <Loader v-if="conferences == null" />
-        <conference-duration-chart
-          v-else
-          :conferences="conferences"
-        />
+        <conference-duration-chart />
       </div>
     </div>
 
@@ -51,8 +44,7 @@
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Number of participants</p>
-        <Loader v-if="conferences == null" />
-        <no-participants-chart v-else :conferences="conferences" />
+        <no-participants-chart />
       </div>
     </div>
 
@@ -112,7 +104,7 @@ export default {
   },
   props: {
     conferences: {
-      required: true,
+      required: false,
       validator: value => {
         return Array.isArray(value) || peermetrics.utils.isNull(value)
       }
@@ -136,17 +128,6 @@ export default {
       }
     },
   },
-  computed: {
-    gumIssues() {
-      if (this.issues) {
-        return this.issues.filter((issue) => {
-          return issue.code === 'getusermedia_error'
-        })
-      }
-
-      return []
-    }
-  }
 };
 </script>
 
