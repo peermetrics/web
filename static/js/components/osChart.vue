@@ -1,12 +1,11 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.series.length===0" />
+    <NoDataMessage v-if="dataSeries.length === 0" />
     <pie-chart
         v-else
         id="os-chart-chartjs"
         tooltipTitle="OS"
-        :datasets="dataSeries.series"
-        :drilldown="dataSeries.drilldown"
+        :datasets="dataSeries"
         :padding-top="60"
     />
   </div>
@@ -19,69 +18,25 @@ import PieChart from "./pieChart.vue";
 export default {
   name: "os-chart",
   props: {
-    sessions: {
+    os: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
     PieChart,
-    NoDataMessage
+    NoDataMessage,
   },
-  mounted() {},
   computed: {
     dataSeries() {
-      let systems = [];
-      let drilldown = {};
-      let len = this.sessions.length;
-
-      this.sessions.forEach(function(event) {
-        if (event.platform) {
-          let platform = event.platform;
-          let name = platform.os.name;
-          let version = platform.os.version;
-
-          systems.push(name);
-
-          if (version) {
-            if (drilldown[name]) {
-              drilldown[name].push(version);
-            } else {
-              drilldown[name] = [version];
-            }
-          }
-        }
-      });
-
-      systems = peermetrics.utils.reduce(systems, len);
-
-      let series = [];
-      let drilldownSeries = [];
-      for (let browser in systems) {
-        series.push({
-          name: browser,
-          y: systems[browser],
-          drilldown: drilldown[browser] ? browser : null
-        });
-
-        if (drilldown[browser]) {
-          let versions = peermetrics.utils.reduce(
-            drilldown[browser],
-            drilldown[browser].length
-          );
-          drilldownSeries.push({
-            name: browser,
-            id: browser,
-            data: Object.entries(versions)
-          });
-        }
-      }
-
-      return {
-        series,
-        drilldown: drilldownSeries
-      };
-    }
+      const total = this.os.reduce((sum, row) => sum + (row.count || 0), 0);
+      if (!total) return [];
+      return this.os.map((row) => ({
+        name: row.name,
+        y: (row.count / total) * 100,
+        count: row.count,
+      }));
+    },
   },
 };
 </script>
@@ -91,4 +46,3 @@ export default {
   background-color: white;
 }
 </style>
-

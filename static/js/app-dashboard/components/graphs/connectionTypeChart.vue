@@ -1,6 +1,7 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.length===0" />
+    <Loader v-if="loading" />
+    <NoDataMessage v-else-if="dataSeries.length === 0" />
     <pie-chart
         v-else
         id="type-of-connection-chartjs"
@@ -13,66 +14,58 @@
 <script>
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import PieChart from "../../../components/pieChart.vue";
+import Loader from "../../../components/loader.vue";
 
 export default {
   name: "connection-type-chart",
 
-  props: {
-    connections: {
-      type: Array,
-      required: true
-    }
-  },
-
   components: {
     NoDataMessage,
-    PieChart
+    PieChart,
+    Loader,
+  },
+
+  data() {
+    return {
+      loading: true,
+      summary: [],
+    };
   },
 
   computed: {
     dataSeries() {
-      let result = this.connections
-          .map(connection => {
-            // get connection type from each one
-            return connection.type;
-          })
-          // concat the arrays to create one big one
-          .reduce((arr, cur) => {
-            return arr.concat(cur);
-          }, [])
-          // filter out invalid values
-          .filter(arr => !!arr);
-
-      let types = peermetrics.utils.reduce(result);
-
-      let connectionsCount = Object.values(types).reduce((a, b) => a + b, 0);
-
-      let grouping = {
-        'relayed': 0,
-        'direct': 0
-      }
-      // group the connection types into 2 categories
-      for (let key of Object.keys(types)) {
-        const group_key = key === 'relay' ? 'relayed' : 'direct'
-        grouping[group_key] += types[key]
-      }
-
-      let series = []
-      if (connectionsCount) {
-        series.push({
-          name: 'Direct',
-          y: (grouping['direct'] / connectionsCount) * 100,
-          count: grouping['direct']
-        }, {
-          name: 'Relayed',
-          y: (grouping['relayed'] / connectionsCount) * 100,
-          count: grouping['relayed']
-        })
-      }
-
-      return series
+      const total = this.summary.reduce((sum, row) => sum + (row.count || 0), 0);
+      if (!total) return [];
+      return this.summary.map((row) => ({
+        name: row.name,
+        y: (row.count / total) * 100,
+        count: row.count,
+      }));
     }
-  }
+  },
+
+  async mounted() {
+    await this.fetchSummary();
+  },
+
+  methods: {
+    async fetchSummary() {
+      this.loading = true;
+      try {
+        const since = new Date();
+        since.setDate(since.getDate() - peermetrics.daysHistory);
+        const res = await peermetrics.get(peermetrics.urls.connectionsSummary, {
+          appId: peermetrics.app.id,
+          created_at_gte: since.toISOString(),
+        });
+        this.summary = Array.isArray(res) ? res : (res.data || []);
+      } catch (e) {
+        console.warn(e);
+        this.summary = [];
+      }
+      this.loading = false;
+    },
+  },
 };
 </script>
 
