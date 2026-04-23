@@ -3,8 +3,7 @@
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Conferences</p>
-        <Loader v-if="conferences == null" />
-        <conferences-chart v-else :conferences="conferences" />
+        <conferences-chart />
       </div>
     </div>
 
