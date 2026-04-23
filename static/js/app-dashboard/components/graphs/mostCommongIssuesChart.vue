@@ -75,7 +75,7 @@ export default {
           appId: peermetrics.app.id,
           created_at_gte: since.toISOString(),
         });
-        this.summary = Object.freeze(res.data || []);
+        this.summary = Object.freeze(Array.isArray(res) ? res : (res.data || []));
       } catch (e) {
         console.warn(e);
         this.summary = [];
