@@ -1,6 +1,7 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.length===0" />
+    <Loader v-if="loading" />
+    <NoDataMessage v-else-if="dataSeries.length === 0" />
     <pie-chart
         v-else
         id="number-of-participants-chartjs"
@@ -13,41 +14,60 @@
 <script>
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import PieChart from "../../../components/pieChart.vue";
+import Loader from "../../../components/loader.vue";
 
 export default {
   name: "participants-chart",
-  props: {
-    conferences: {
-      type: Array,
-      required: true
-    }
-  },
   components: {
     PieChart,
-    NoDataMessage
+    NoDataMessage,
+    Loader,
   },
 
-  mounted() {},
+  data() {
+    return {
+      loading: true,
+      summary: [],
+    };
+  },
+
   computed: {
     dataSeries() {
-      let arr = this.conferences.map(conf => {
-        return conf.participants_count || (conf.participants ? conf.participants.length : 0);
-      });
-      let participants = peermetrics.utils.reduce(arr);
-      let conferencesCount = this.conferences.length;
-      let series = [];
+      const total = this.summary.reduce((sum, row) => sum + (row.conferences || 0), 0);
+      if (!total) return [];
+      return this.summary.map((row) => ({
+        name: String(row.participants),
+        y: (row.conferences / total) * 100,
+        count: row.conferences,
+      }));
+    },
+  },
 
-      for (let key of Object.keys(participants)) {
-        series.push({
-          name: key,
-          y: (participants[key] / conferencesCount) * 100,
-          count: participants[key]
-        });
+  async mounted() {
+    await this.fetchSummary();
+  },
+
+  methods: {
+    async fetchSummary() {
+      this.loading = true;
+      try {
+        const since = new Date();
+        since.setDate(since.getDate() - peermetrics.daysHistory);
+        const res = await peermetrics.get(
+          peermetrics.urls.conferencesParticipantCountSummary,
+          {
+            appId: peermetrics.app.id,
+            created_at_gte: since.toISOString(),
+          }
+        );
+        this.summary = Array.isArray(res) ? res : (res.data || []);
+      } catch (e) {
+        console.warn(e);
+        this.summary = [];
       }
-
-      return series;
-    }
-  }
+      this.loading = false;
+    },
+  },
 };
 </script>
 

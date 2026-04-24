@@ -1,6 +1,7 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="seriesData.length===0 " />
+    <Loader v-if="loading" />
+    <NoDataMessage v-else-if="summary.length === 0" />
 
     <bar-chart
         v-else
@@ -25,76 +26,102 @@
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import ConferenceListModal from "../../../components/conferenceListModal.vue";
 import BarChart from "../../../components/barChart.vue";
+import Loader from "../../../components/loader.vue";
 
 export default {
   name: "most-common-issues-chart",
-  props: {
-    issues: {
-      type: Array,
-      required: true
-    },
-    conferences: {
-      type: Array,
-      required: true
-    }
-  },
   components: {
     BarChart,
     NoDataMessage,
-    ConferenceListModal
+    ConferenceListModal,
+    Loader,
   },
+
   data() {
     return {
-      modalConferences: []
+      loading: true,
+      summary: [],
+      modalConferences: [],
     };
   },
-  computed: {
-    errorCodes() {
-      return this.issues.map((issue) => {
-        return issue.code
-      })
-    },
-    sortedCodes() {
-      return peermetrics.utils.reduce(this.errorCodes)
-    },
-    categories() {
-      return this.seriesData.map(s => s.title)
-    },
-    seriesData() {
-      const issues = {}
-      this.issues.forEach((issue) => {
-        issues[issue.code] = issue
-      })
 
-      return Object.keys(this.sortedCodes).map((key) => {
-        return {
-          y: this.sortedCodes[key],
-          issueCode: key,
-          title: issues[key]?.title,
-        }
-      })
-      .sort((first, second) => second.y - first.y)
+  computed: {
+    categories() {
+      return this.summary.map((row) => row.title || row.code);
     },
     series() {
       return [
         {
           label: "Issues",
-          data: this.seriesData.map(s => s.y),
+          data: this.summary.map((row) => row.count),
           backgroundColor: peermetrics.colors.info,
           barThickness: 20,
-        }
+        },
       ];
     },
   },
 
+  async mounted() {
+    await this.fetchSummary();
+  },
+
   methods: {
-    onChartClick(e) {
-      this.modalConferences = this.conferences.filter((conf) => {
-        return conf.issues && conf.issues.some((issue) => issue.code === this.seriesData.find(s => s.y === e.yValue).issueCode)
-      });
+    async fetchSummary() {
+      this.loading = true;
+      try {
+        const since = new Date();
+        since.setDate(since.getDate() - peermetrics.daysHistory);
+        const res = await peermetrics.get(peermetrics.urls.issuesSummary, {
+          appId: peermetrics.app.id,
+          created_at_gte: since.toISOString(),
+        });
+        this.summary = Object.freeze(Array.isArray(res) ? res : (res.data || []));
+      } catch (e) {
+        console.warn(e);
+        this.summary = [];
+      }
+      this.loading = false;
+    },
+
+    async onChartClick(e) {
+      const row = this.summary[e.index];
+      if (!row) return;
+
+      try {
+        this.modalConferences = await this.fetchConferencesForIssue(row.code);
+      } catch (err) {
+        console.warn(err);
+        this.modalConferences = [];
+      }
       this.$refs["conferencesModal"].show();
-    }
-  }
+    },
+
+    async fetchConferencesForIssue(issueCode) {
+      const since = new Date();
+      since.setDate(since.getDate() - peermetrics.daysHistory);
+
+      const PAGE_SIZE = 200;
+      const out = [];
+      let offset = 0;
+      let total = Infinity;
+
+      while (offset < total) {
+        const res = await peermetrics.get(peermetrics.urls.conferences(), {
+          appId: peermetrics.app.id,
+          created_at_gte: since.toISOString(),
+          issue_code: issueCode,
+          limit: PAGE_SIZE,
+          offset,
+        });
+        const page = res.results || [];
+        total = typeof res.count === "number" ? res.count : page.length;
+        out.push(...page);
+        if (page.length === 0) break;
+        offset += page.length;
+      }
+      return out;
+    },
+  },
 };
 </script>
 

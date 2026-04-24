@@ -48,6 +48,10 @@
       }
     },
     conferencesSummary: '/conferences/summary',
+    conferencesDurationSummary: '/conferences/duration-summary',
+    conferencesParticipantCountSummary: '/conferences/participant-count-summary',
+    issuesSummary: '/issues/summary',
+    issuesGumSummary: '/issues/gum-summary',
     conferenceEvents: function (conferenceId) {
       if (!conferenceId) {
         throw new Error('Missing conferenceId')
