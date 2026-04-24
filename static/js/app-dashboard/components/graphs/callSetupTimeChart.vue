@@ -1,6 +1,7 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="seriesData.length === 0" />
+    <Loader v-if="loading" />
+    <NoDataMessage v-else-if="isEmpty" />
     <bar-chart
         v-else
         id="call-setup-time-chartjs"
@@ -22,167 +23,108 @@
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import ConferenceListModal from "../../../components/conferenceListModal.vue";
 import BarChart from "../../../components/barChart.vue";
+import Loader from "../../../components/loader.vue";
 
 export default {
   name: "call-setup-time-chart",
-  props: {
-    connections: {
-      type: Array,
-      required: true
-    },
-    conferences: {
-      type: Array,
-      required: true
-    }
-  },
   components: {
     BarChart,
     NoDataMessage,
     ConferenceListModal,
+    Loader,
   },
+
   data() {
     return {
-      durationInverval: [
-        {
-          title: "< 250 ms",
-          min: 0,
-          max: 250,
-          number: 0,
-          data: []
-        },
-        {
-          title: "250 - 500 ms",
-          min: 250,
-          max: 500,
-          number: 0,
-          data: []
-        },
-        {
-          title: "500 - 750 ms",
-          min: 500,
-          max: 750,
-          number: 0,
-          data: []
-        },
-        {
-          title: "750 - 1000 ms",
-          min: 750,
-          max: 1000,
-          number: 0,
-          data: []
-        },
-        {
-          title: "1000 - 1500 ms",
-          min: 1000,
-          max: 1500,
-          number: 0,
-          data: []
-        },
-        {
-          title: "1500 - 2000 ms",
-          min: 1500,
-          max: 2000,
-          number: 0,
-          data: []
-        },
-        {
-          title: "2000 - 2500 ms",
-          min: 2000,
-          max: 2500,
-          number: 0,
-          data: []
-        },
-        {
-          title: "2500 - 3000 ms",
-          min: 2500,
-          max: 3000,
-          number: 0,
-          data: []
-        },
-        {
-          title: "3000 - 4000 ms",
-          min: 3000,
-          max: 4000,
-          number: 0,
-          data: []
-        },
-        {
-          title: "4000 - 5000 ms",
-          min: 4000,
-          max: 5000,
-          number: 0,
-          data: []
-        },
-        {
-          title: "> 5000 ms",
-          min: 5000,
-          max: Infinity,
-          number: 0,
-          data: []
-        }
-      ],
+      loading: true,
+      summary: [],
       modalConferences: [],
     };
   },
 
   computed: {
-    durations() {
-      let confSetupDurations = this.connections.map(connection => {
-        // take all the negociations
-        let negotiations = connection.connection_info['negotiations']
-        // if the first one is not a reneociation
-        if (negotiations && negotiations[0]) {
-          if (negotiations[0].status === 'connected') {
-            // return negotiations[0].duration
-            return {
-              value: new Date(negotiations[0].end_time) - new Date(negotiations[0].start_time),
-              data: connection.conference
-            }
-          }
-        }
-      });
-
-      return peermetrics.utils.groupDurations(
-        confSetupDurations,
-        this.durationInverval
-      );
-    },
     categories() {
-      return this.durations.map(n => n.title);
-    },
-    seriesData() {
-      const hasValues = this.durations.reduce((accumulator, currentValue) => accumulator + currentValue.number, 0)
-
-      if (hasValues) {
-        return {
-          data: this.durations.map((n) => n.number),
-          values: this.durations.map((n) => new Set(n.data))
-        }
-      }
-
-      return []
+      return this.summary.map((b) => b.range);
     },
     series() {
       return [
         {
           label: "Connections",
-          data: this.seriesData.data,
+          data: this.summary.map((b) => b.count),
           backgroundColor: peermetrics.colors.info,
-          values: this.seriesData.values
-        }
+        },
       ];
-    }
+    },
+    isEmpty() {
+      return this.summary.every((b) => b.count === 0);
+    },
+  },
+
+  async mounted() {
+    await this.fetchSummary();
   },
 
   methods: {
-    onChartClick(e) {
-      this.modalConferences = this.conferences.filter((conf) => {
-        return this.seriesData.values[e.index].has(conf.id)
-      });
+    async fetchSummary() {
+      this.loading = true;
+      try {
+        const since = new Date();
+        since.setDate(since.getDate() - peermetrics.daysHistory);
+        const res = await peermetrics.get(peermetrics.urls.connectionsSetupTimeSummary, {
+          appId: peermetrics.app.id,
+          created_at_gte: since.toISOString(),
+        });
+        this.summary = Object.freeze(Array.isArray(res) ? res : (res.data || []));
+      } catch (e) {
+        console.warn(e);
+        this.summary = [];
+      }
+      this.loading = false;
+    },
 
+    async onChartClick(e) {
+      const bucket = this.summary[e.index];
+      if (!bucket || !bucket.conference_ids || bucket.conference_ids.length === 0) {
+        this.modalConferences = [];
+        this.$refs["conferencesModal"].show();
+        return;
+      }
+
+      try {
+        this.modalConferences = await this.fetchConferences(bucket.conference_ids);
+      } catch (err) {
+        console.warn(err);
+        this.modalConferences = [];
+      }
       this.$refs["conferencesModal"].show();
-    }
-  }
+    },
+
+    async fetchConferences(ids) {
+      const PAGE_SIZE = 200;
+      const CHUNK = 100;
+      const out = [];
+
+      for (let start = 0; start < ids.length; start += CHUNK) {
+        const chunk = ids.slice(start, start + CHUNK);
+        let offset = 0;
+        let total = Infinity;
+        while (offset < total) {
+          const res = await peermetrics.get(peermetrics.urls.conferences(), {
+            appId: peermetrics.app.id,
+            conference_ids: chunk.join(','),
+            limit: PAGE_SIZE,
+            offset,
+          });
+          const page = res.results || [];
+          total = typeof res.count === "number" ? res.count : page.length;
+          out.push(...page);
+          if (page.length === 0) break;
+          offset += page.length;
+        }
+      }
+      return out;
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

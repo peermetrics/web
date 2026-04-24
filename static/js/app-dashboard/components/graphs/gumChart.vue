@@ -1,6 +1,7 @@
 <template>
   <div class="chart">
-    <NoDataMessage v-if="dataSeries.length===0" />
+    <Loader v-if="loading" />
+    <NoDataMessage v-else-if="dataSeries.length === 0" />
     <pie-chart
         v-else
         id="gum-chartjs"
@@ -14,44 +15,57 @@
 <script>
 import NoDataMessage from "../../../components/noDataMessage.vue";
 import PieChart from "../../../components/pieChart.vue";
+import Loader from "../../../components/loader.vue";
 
 export default {
   name: "gum-chart",
-  props: {
-    issues: {
-      type: Array,
-      required: true
-    }
-  },
   components: {
     PieChart,
-    NoDataMessage
+    NoDataMessage,
+    Loader,
   },
+
+  data() {
+    return {
+      loading: true,
+      summary: [],
+    };
+  },
+
   computed: {
     dataSeries() {
-      const numberOfErrors = this.issues.length
-
-      let titles = {}
-      const result = this.issues.map(function(issue) {
-        titles[issue.data.name] = issue.data.message
-        return issue.data.name
-      })
-
-      let gum_warnings = peermetrics.utils.reduce(result);
-
-      let series = [];
-
-      for (let key of Object.keys(gum_warnings)) {
-        series.push({
-          name: titles[key],
-          y: (gum_warnings[key] / numberOfErrors) * 100,
-          count: gum_warnings[key]
-        });
-      }
-
-      return series;
+      const total = this.summary.reduce((sum, row) => sum + (row.count || 0), 0);
+      if (!total) return [];
+      return this.summary.map((row) => ({
+        name: row.message || row.name,
+        y: (row.count / total) * 100,
+        count: row.count,
+      }));
     },
-  }
+  },
+
+  async mounted() {
+    await this.fetchSummary();
+  },
+
+  methods: {
+    async fetchSummary() {
+      this.loading = true;
+      try {
+        const since = new Date();
+        since.setDate(since.getDate() - peermetrics.daysHistory);
+        const res = await peermetrics.get(peermetrics.urls.issuesGumSummary, {
+          appId: peermetrics.app.id,
+          created_at_gte: since.toISOString(),
+        });
+        this.summary = Array.isArray(res) ? res : (res.data || []);
+      } catch (e) {
+        console.warn(e);
+        this.summary = [];
+      }
+      this.loading = false;
+    },
+  },
 };
 </script>
 

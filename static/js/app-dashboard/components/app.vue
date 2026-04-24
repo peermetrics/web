@@ -109,12 +109,7 @@
         role="tabpanel"
         aria-labelledby="graphs-tab"
       >
-        <graphs-tab
-          :conferences="conferences"
-          :sessions="sessions"
-          :connections="connections"
-          :issues="issues"
-        />
+        <graphs-tab />
       </div>
       <div class="tab-pane fade" id="conferences" role="tabpanel" aria-labelledby="conferences-tab">
         <conferences-tab
