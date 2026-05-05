@@ -10,69 +10,60 @@
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Most common issues</p>
-        <Loader v-if="(issues == null || conferences == null)" />
-        <most-common-issues-chart v-else :issues="issues" :conferences="conferences" />
+        <most-common-issues-chart />
       </div>
     </div>
 
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Errors getting access to media</p>
-        <Loader v-if="issues == null" />
-        <gum-chart v-else :issues="gumIssues" />
+        <gum-chart />
       </div>
       <div class="col">
         <p class="lead">Relayed connections</p>
-        <Loader v-if="connections == null" />
-        <connection-type-chart v-else :connections="connections" />
+        <connection-type-chart />
       </div>
     </div>
 
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Conference duration</p>
-        <Loader v-if="conferences == null" />
-        <conference-duration-chart
-          v-else
-          :conferences="conferences"
-        />
+        <conference-duration-chart />
       </div>
     </div>
 
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Connection setup time</p>
-        <Loader v-if="(connections == null || conferences == null)" />
-        <call-setup-time-chart v-else :connections="connections" :conferences="conferences" />
+        <call-setup-time-chart />
       </div>
     </div>
 
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Number of participants</p>
-        <Loader v-if="conferences == null" />
-        <no-participants-chart v-else :conferences="conferences" />
+        <no-participants-chart />
       </div>
     </div>
 
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Browsers</p>
-        <Loader v-if="sessions == null" />
-        <browsers-chart v-else :sessions="sessions" />
+        <Loader v-if="loadingSessions" />
+        <browsers-chart v-else :browsers="sessionsSummary.browsers || []" />
       </div>
       <div class="col">
         <p class="lead">Operating systems</p>
-        <Loader v-if="sessions == null" />
-        <o-s-chart v-else :sessions="sessions" />
+        <Loader v-if="loadingSessions" />
+        <o-s-chart v-else :os="sessionsSummary.os || []" />
       </div>
     </div>
 
     <div class="row mt-3">
       <div class="col">
         <p class="lead">Map</p>
-        <Loader v-if="sessions == null" />
-        <map-chart v-else :sessions="sessions" />
+        <Loader v-if="loadingSessions" />
+        <map-chart v-else :cities="sessionsSummary.cities || []" />
       </div>
     </div>
   </div>
@@ -107,45 +98,35 @@ export default {
     BrowsersChart,
     OSChart,
     MapChart,
-    Loader
+    Loader,
   },
-  props: {
-    conferences: {
-      required: true,
-      validator: value => {
-        return Array.isArray(value) || peermetrics.utils.isNull(value)
+  data() {
+    return {
+      loadingSessions: true,
+      sessionsSummary: {},
+    };
+  },
+  async mounted() {
+    await this.fetchSessionsSummary();
+  },
+  methods: {
+    async fetchSessionsSummary() {
+      this.loadingSessions = true;
+      try {
+        const since = new Date();
+        since.setDate(since.getDate() - peermetrics.daysHistory);
+        const res = await peermetrics.get(peermetrics.urls.sessionsSummary, {
+          appId: peermetrics.app.id,
+          created_at_gte: since.toISOString(),
+        });
+        this.sessionsSummary = res || {};
+      } catch (e) {
+        console.warn(e);
+        this.sessionsSummary = {};
       }
-    },
-    sessions: {
-      required: false,
-      validator: value => {
-        return Array.isArray(value) || peermetrics.utils.isNull(value)
-      }
-    },
-    connections: {
-      required: false,
-      validator: value => {
-        return Array.isArray(value) || peermetrics.utils.isNull(value)
-      }
-    },
-    issues: {
-      required: false,
-      validator: value => {
-        return Array.isArray(value) || peermetrics.utils.isNull(value)
-      }
+      this.loadingSessions = false;
     },
   },
-  computed: {
-    gumIssues() {
-      if (this.issues) {
-        return this.issues.filter((issue) => {
-          return issue.code === 'getusermedia_error'
-        })
-      }
-
-      return []
-    }
-  }
 };
 </script>
 
