@@ -3,7 +3,7 @@
     <p>Participants</p>
     <Loader v-if="participants === null" />
     <div v-else class="row row-cols-1 row-cols-md-3 mt-3 cards">
-      <div v-for="participant in participants" :key="participant.id" class="col mb-4">
+      <div v-for="participant in nonSfuParticipants" :key="participant.id" class="col mb-4">
         <div class="card h-100">
           <participants-card :participant="participant" />
         </div>
@@ -71,6 +71,13 @@ export default {
     ParticipantsAccordion,
     ParticipantsCard,
     MapChart
+  },
+
+  computed: {
+    nonSfuParticipants() {
+      if (!Array.isArray(this.participants)) return [];
+      return this.participants.filter((p) => !p.is_sfu);
+    },
   },
 };
 </script>
