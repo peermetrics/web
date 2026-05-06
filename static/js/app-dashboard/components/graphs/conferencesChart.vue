@@ -165,9 +165,10 @@ export default {
           : this.seriesData.dates.indexOf(e.xValue);
       if (idx === -1) return;
       const isoDate = this.seriesData.isoDates[idx];
-      const day = moment(isoDate);
-      const dayStart = day.clone().startOf("day").toISOString();
-      const dayEnd = day.clone().endOf("day").toISOString();
+      // Summary API buckets with TruncDate in UTC (same as Django TIME_ZONE).
+      // Local start/end would disagree with those buckets and yield wrong/empty modals.
+      const dayStart = moment.utc(isoDate).startOf("day").toISOString();
+      const dayEnd = moment.utc(isoDate).endOf("day").toISOString();
 
       try {
         this.modalConferences = await this.fetchAllConferencesForDay(dayStart, dayEnd, statusKey);
