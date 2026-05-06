@@ -32,13 +32,6 @@ const SERIES_TO_STATUS_KEY = {
   Ongoing: "ongoing",
 };
 
-const STATUS_KEY_TO_API = {
-  warning: "warning",
-  error: "error",
-  ongoing: "ongoing",
-  // success is derived — no direct API filter
-};
-
 export default {
   name: "conferences-chart",
   components: {
@@ -65,18 +58,22 @@ export default {
     },
 
     seriesData() {
-      // Build parallel arrays: ISO date (unambiguous across years) for
-      // lookup/click handling, and MM/DD for display on the x-axis.
-      const isoDates = [];
-      const displayDates = [];
+      // Rolling window in the browser's local calendar (used for the default axis).
+      const windowIso = [];
       const day = moment();
       for (let i = 0; i <= peermetrics.daysHistory; i++) {
-        isoDates.push(day.format("YYYY-MM-DD"));
-        displayDates.push(day.format("MM/DD"));
+        windowIso.push(day.format("YYYY-MM-DD"));
         day.subtract(1, "days");
       }
-      isoDates.reverse();
-      displayDates.reverse();
+      windowIso.reverse();
+
+      // The API groups with TruncDate in the server/DB timezone; that calendar day
+      // can fall one day earlier/later than the browser-built list. Merge every
+      // date returned by the summary so bar totals match other charts (e.g. duration).
+      const fromApi = this.summary.map((row) => row.date).filter(Boolean);
+      const isoDates = [...new Set([...windowIso, ...fromApi])].sort();
+
+      const displayDates = isoDates.map((iso) => moment(iso).format("MM/DD"));
 
       const succSeriesData = [];
       const warnSeriesData = [];
@@ -162,7 +159,10 @@ export default {
       // built in seriesData. Using the label index avoids the year-boundary
       // bug where "12/31" in early January would otherwise resolve to the
       // current year instead of the previous year.
-      const idx = this.seriesData.dates.indexOf(e.xValue);
+      const idx =
+        typeof e.index === "number"
+          ? e.index
+          : this.seriesData.dates.indexOf(e.xValue);
       if (idx === -1) return;
       const isoDate = this.seriesData.isoDates[idx];
       const day = moment(isoDate);
