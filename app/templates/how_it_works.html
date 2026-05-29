@@ -1,0 +1,715 @@
+{% extends "base.html" %}
+
+{% block assets %}
+  <style>
+    :root {
+      --demo-blue: #1560d8;
+      --demo-navy: #0f3b77;
+      --demo-sky: #53b3ff;
+      --demo-ink: #12263f;
+    }
+
+    .how-it-works-page {
+      background:
+        radial-gradient(circle at top left, rgba(24, 144, 255, 0.15), transparent 32%),
+        linear-gradient(180deg, #f6fbff 0%, #ffffff 38%, #f5f7fb 100%);
+    }
+
+    .scenario-switcher {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .scenario-pill {
+      padding: 1rem 1.1rem;
+      border: 1px solid rgba(18, 38, 63, 0.08);
+      border-radius: 18px;
+      background: #fff;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .scenario-pill:hover,
+    .scenario-pill.active {
+      border-color: rgba(21, 96, 216, 0.24);
+      box-shadow: 0 16px 34px rgba(21, 96, 216, 0.14);
+      transform: translateY(-1px);
+    }
+
+    .demo-shell {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(18, 38, 63, 0.08);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 28px 80px rgba(18, 38, 63, 0.12);
+    }
+
+    .demo-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(38, 132, 255, 0.06), transparent 48%);
+      pointer-events: none;
+    }
+
+    .demo-nav {
+      border-right: 1px solid rgba(18, 38, 63, 0.08);
+      background: linear-gradient(180deg, #eff6ff 0%, #f8fbff 100%);
+    }
+
+    .demo-step {
+      width: 100%;
+      padding: 1rem 1.1rem;
+      border: 1px solid transparent;
+      border-radius: 18px;
+      background: transparent;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .demo-step:hover,
+    .demo-step.active {
+      border-color: rgba(38, 132, 255, 0.16);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 14px 30px rgba(38, 132, 255, 0.1);
+    }
+
+    .demo-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      margin-bottom: 0.65rem;
+      border-radius: 999px;
+      background: #d9ebff;
+      color: #1560d8;
+      font-weight: 600;
+    }
+
+    .demo-step.active .demo-label {
+      background: #1560d8;
+      color: #fff;
+    }
+
+    .kpi-card {
+      height: 100%;
+      border: 1px solid rgba(18, 38, 63, 0.08);
+      border-radius: 22px;
+      background: #fff;
+      box-shadow: 0 18px 40px rgba(18, 38, 63, 0.08);
+    }
+
+    .kpi-card.active-panel {
+      border-color: rgba(38, 132, 255, 0.28);
+      box-shadow: 0 22px 48px rgba(38, 132, 255, 0.16);
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .metric-delta-primary {
+      color: var(--demo-blue);
+    }
+
+    .metric-delta-success {
+      color: #117a37;
+    }
+
+    .metric-delta-warning {
+      color: #a26400;
+    }
+
+    .metric-delta-danger {
+      color: #b42318;
+    }
+
+    .trend-card,
+    .insight-card,
+    .recommendation-card {
+      border: 1px solid rgba(18, 38, 63, 0.08);
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 16px 36px rgba(18, 38, 63, 0.08);
+    }
+
+    .trend-card.active-panel,
+    .insight-card.active-panel,
+    .recommendation-card.active-panel,
+    .spotlight-card.active-panel {
+      border-color: rgba(38, 132, 255, 0.28);
+      box-shadow: 0 22px 48px rgba(38, 132, 255, 0.16);
+    }
+
+    .spotlight-card {
+      border: 1px solid rgba(18, 38, 63, 0.08);
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(15, 59, 119, 0.98) 0%, rgba(21, 96, 216, 0.98) 62%, rgba(83, 179, 255, 0.92) 100%);
+      color: #fff;
+      box-shadow: 0 24px 60px rgba(21, 96, 216, 0.2);
+    }
+
+    .spotlight-card p,
+    .spotlight-card small {
+      opacity: 0.92;
+    }
+
+    .chart-surface {
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(21, 96, 216, 0.06), rgba(21, 96, 216, 0));
+    }
+
+    .trend-grid {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: repeat(4, 1fr);
+    }
+
+    .trend-grid span {
+      border-top: 1px dashed rgba(21, 96, 216, 0.15);
+    }
+
+    .mini-bar-track {
+      height: 0.6rem;
+      border-radius: 999px;
+      background: #e8eef7;
+      overflow: hidden;
+    }
+
+    .mini-bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #1560d8, #4ca9ff);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-healthy {
+      background: #e7f8ee;
+      color: #117a37;
+    }
+
+    .status-watch {
+      background: #fff4dd;
+      color: #a26400;
+    }
+
+    .status-recovering {
+      background: #eaf0ff;
+      color: #3157c8;
+    }
+
+    .status-critical {
+      background: #fce8e6;
+      color: #b42318;
+    }
+
+    .demo-loading {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(246, 251, 255, 0.88);
+      backdrop-filter: blur(10px);
+      transition: opacity 0.35s ease;
+    }
+
+    .demo-loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-card {
+      width: min(420px, calc(100% - 2rem));
+      padding: 1.5rem;
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 20px 50px rgba(18, 38, 63, 0.12);
+    }
+
+    .loading-bar {
+      height: 0.85rem;
+      border-radius: 999px;
+      background: #e8eef7;
+      overflow: hidden;
+    }
+
+    .loading-bar span {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #1560d8, #51b0ff);
+      animation: loadDemo 1.4s ease forwards;
+    }
+
+    .demo-callout {
+      border-radius: 22px;
+      background: linear-gradient(135deg, #0f3b77 0%, #1560d8 52%, #53b3ff 100%);
+      color: #fff;
+      box-shadow: 0 20px 60px rgba(21, 96, 216, 0.24);
+    }
+
+    .demo-microcopy {
+      min-height: 2.8rem;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    @keyframes loadDemo {
+      from {
+        width: 0;
+      }
+
+      to {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 991.98px) {
+      .demo-nav {
+        border-right: 0;
+        border-bottom: 1px solid rgba(18, 38, 63, 0.08);
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="how-it-works-page py-5">
+    <section class="container pb-4">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <span class="badge badge-primary badge-pill px-3 py-2 mb-3">Interactive product walkthrough</span>
+          <h1 class="display-4 mb-3">Pitch the dashboard like a real product before the backend exists.</h1>
+          <p class="lead text-muted mb-4">
+            This demo route renders a realistic peer metrics workspace with mocked signals, guided highlights, and a clean path to later swap in live data.
+          </p>
+          <div class="d-flex flex-wrap align-items-center">
+            <a href="#demo-walkthrough" class="btn btn-primary btn-lg mr-3 mb-2">Launch walkthrough</a>
+            <a href="{{ url('docs') }}" class="btn btn-outline-primary btn-lg mb-2" target="_blank">View SDK docs</a>
+          </div>
+        </div>
+        <div class="col-lg-5 offset-lg-1">
+          <div class="demo-callout p-4 p-lg-5">
+            <p class="text-uppercase small mb-2" style="letter-spacing: 0.12em; opacity: 0.72;">Demo flow</p>
+            <h2 class="h3 mb-3 text-white">Three scenarios, one polished walkthrough</h2>
+            <p class="demo-microcopy mb-4">
+              Switch from an improving release to an at-risk account or a recovery week while keeping the same product story intact.
+            </p>
+            <div class="d-flex flex-wrap">
+              {% for scenario in demo_scenarios %}
+                <span class="badge badge-light mr-2 mb-2">{{ scenario.label }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container pb-5" id="demo-walkthrough">
+      <div class="demo-shell">
+        <div class="demo-loading" id="demo-loading">
+          <div class="loading-card">
+            <p class="text-uppercase small text-primary mb-2" style="letter-spacing: 0.12em;">Preparing demo</p>
+            <h2 class="h4 mb-3">Rendering mocked peer metrics dashboard</h2>
+            <p class="text-muted mb-3">Loading overview cards, trend lines, issue distribution, and next-step guidance.</p>
+            <div class="loading-bar"><span></span></div>
+          </div>
+        </div>
+
+        <div class="row no-gutters">
+          <div class="col-lg-3 demo-nav p-4 p-lg-5">
+            <p class="text-uppercase small text-primary mb-3" style="letter-spacing: 0.12em;">Walkthrough</p>
+            <div style="display: grid; gap: 0.85rem;">
+              {% for step in journey_steps %}
+                <button
+                  class="demo-step{% if loop.index0 == 0 %} active{% endif %}"
+                  type="button"
+                  data-step-target="{{ loop.index0 }}"
+                >
+                  <span class="demo-label">{{ loop.index }}</span>
+                  <strong class="d-block mb-1">{{ step.title }}</strong>
+                  <span class="text-muted small">{{ step.caption }}</span>
+                </button>
+              {% endfor %}
+            </div>
+            <div class="mt-4 pt-2">
+              <p class="small text-muted mb-2">Autoplay is enabled so stakeholders can watch the story unfold on their own.</p>
+              <button class="btn btn-outline-primary btn-sm" type="button" id="demo-restart">Replay walkthrough</button>
+            </div>
+          </div>
+
+          <div class="col-lg-9 p-4 p-lg-5">
+            <p class="text-uppercase small text-primary mb-3" style="letter-spacing: 0.12em;">Scenario selector</p>
+            <div class="scenario-switcher mb-4">
+              {% for scenario in demo_scenarios %}
+                <button class="scenario-pill{% if scenario.id == initial_scenario_id %} active{% endif %}" type="button" data-scenario-id="{{ scenario.id }}">
+                  <strong class="d-block mb-1">{{ scenario.label }}</strong>
+                  <span class="text-muted small">{{ scenario.teaser }}</span>
+                </button>
+              {% endfor %}
+            </div>
+
+            <div class="row align-items-stretch mb-4">
+              <div class="col-xl-7 mb-4 mb-xl-0">
+                <div class="h-100 p-4 p-lg-5" style="border: 1px solid rgba(18, 38, 63, 0.08); border-radius: 26px; background: #fff; box-shadow: 0 18px 40px rgba(18, 38, 63, 0.08);">
+                  <p class="text-uppercase small text-primary mb-2" style="letter-spacing: 0.12em;">Workspace snapshot</p>
+                  <h2 class="h3 mb-2"><span id="scenario-account"></span>, <span id="scenario-environment" class="text-lowercase"></span></h2>
+                  <p class="text-muted mb-0" id="scenario-summary"></p>
+                </div>
+              </div>
+              <div class="col-xl-5">
+                <div class="spotlight-card h-100 p-4 p-lg-5 active-panel" data-panel-group="1">
+                  <p class="text-uppercase small mb-2" id="spotlight-eyebrow" style="letter-spacing: 0.12em;"></p>
+                  <h3 class="h4 text-white mb-3" id="spotlight-title"></h3>
+                  <p class="mb-3" id="spotlight-copy"></p>
+                  <div class="d-flex align-items-center">
+                    <strong class="h1 mb-0 mr-3" id="scenario-score"></strong>
+                    <div>
+                      <span class="status-pill mb-2" id="scenario-score-pill"></span>
+                      <small class="d-block" id="scenario-score-delta"></small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" id="kpi-grid"></div>
+
+            <div class="row">
+              <div class="col-xl-7 mb-4">
+                <div class="trend-card p-4" data-panel-group="1">
+                  <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                      <p class="small text-muted mb-1">Signal trend</p>
+                      <h3 class="h5 mb-0" id="trend-title"></h3>
+                    </div>
+                    <span class="badge badge-primary" id="trend-delta"></span>
+                  </div>
+                  <div class="chart-surface position-relative p-3">
+                    <div class="trend-grid">
+                      <span></span><span></span><span></span><span></span>
+                    </div>
+                    <svg viewBox="0 0 420 220" class="w-100" role="img" aria-label="Call quality trend">
+                      <defs>
+                        <linearGradient id="trendArea" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#3a97ff" stop-opacity="0.32"></stop>
+                          <stop offset="100%" stop-color="#3a97ff" stop-opacity="0"></stop>
+                        </linearGradient>
+                      </defs>
+                      <polygon id="trend-area" fill="url(#trendArea)"></polygon>
+                      <polyline id="trend-line" fill="none" stroke="#1560d8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                      <g id="trend-points"></g>
+                    </svg>
+                  </div>
+                  <div class="row text-center mt-3">
+                    <div class="col"><small class="text-muted">Mon</small></div>
+                    <div class="col"><small class="text-muted">Tue</small></div>
+                    <div class="col"><small class="text-muted">Wed</small></div>
+                    <div class="col"><small class="text-muted">Thu</small></div>
+                    <div class="col"><small class="text-muted">Fri</small></div>
+                    <div class="col"><small class="text-muted">Sat</small></div>
+                    <div class="col"><small class="text-muted">Sun</small></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-5 mb-4">
+                <div class="insight-card p-4" data-panel-group="2">
+                  <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                      <p class="small text-muted mb-1">Issue mix and regions</p>
+                      <h3 class="h5 mb-0">What is driving user pain right now?</h3>
+                    </div>
+                    <span class="badge badge-warning" id="impact-badge"></span>
+                  </div>
+
+                  <div id="issue-list"></div>
+
+                  <hr>
+
+                  <p class="small text-muted mb-3">Regional reliability</p>
+                  <div id="region-list"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="recommendation-card p-4" data-panel-group="3">
+              <div class="row align-items-center">
+                <div class="col-lg-8 mb-3 mb-lg-0">
+                  <p class="small text-muted mb-1">Recommended next actions</p>
+                  <h3 class="h5 mb-3">Use the demo to show what the product helps teams do next, not just what it measures.</h3>
+                  <div class="row" id="recommendation-list"></div>
+                </div>
+
+                <div class="col-lg-4 text-lg-right">
+                  <a href="{{ url('docs') }}" class="btn btn-primary btn-lg mb-2" target="_blank">Explore integration docs</a>
+                  <p class="small text-muted mb-0">Next step: replace the fixture with API-backed datasets when the backend is ready.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    (function () {
+      var scenarios = {{ demo_scenarios|to_json|safe }}
+      var initialScenarioId = '{{ initial_scenario_id }}'
+      var loading = document.getElementById('demo-loading')
+      var stepButtons = Array.prototype.slice.call(document.querySelectorAll('[data-step-target]'))
+      var scenarioButtons = Array.prototype.slice.call(document.querySelectorAll('[data-scenario-id]'))
+      var replayButton = document.getElementById('demo-restart')
+      var autoplayDelay = 2600
+      var autoplayTimer = null
+      var activeStep = 0
+      var currentScenario = scenarios[0]
+
+      function createElement(tagName, className, text) {
+        var element = document.createElement(tagName)
+
+        if (className) {
+          element.className = className
+        }
+
+        if (typeof text === 'string') {
+          element.textContent = text
+        }
+
+        return element
+      }
+
+      function updateScenarioButtons() {
+        scenarioButtons.forEach(function (button) {
+          button.classList.toggle('active', button.getAttribute('data-scenario-id') === currentScenario.id)
+        })
+      }
+
+      function renderKpis(kpis) {
+        var grid = document.getElementById('kpi-grid')
+
+        grid.innerHTML = ''
+
+        kpis.forEach(function (kpi) {
+          var column = createElement('div', 'col-md-6 col-xl-3 mb-4')
+          var card = createElement('div', 'kpi-card p-4')
+          var delta = createElement('p', 'small mb-0 metric-delta-' + kpi.tone, kpi.delta)
+
+          card.setAttribute('data-panel-group', '0')
+          card.appendChild(createElement('p', 'text-muted small mb-2', kpi.label))
+          card.appendChild(createElement('div', 'metric-value font-weight-bold mb-2', kpi.value))
+          card.appendChild(delta)
+          column.appendChild(card)
+          grid.appendChild(column)
+        })
+      }
+
+      function renderTrend(points) {
+        var line = document.getElementById('trend-line')
+        var area = document.getElementById('trend-area')
+        var dots = document.getElementById('trend-points')
+        var chartWidth = 420
+        var chartHeight = 220
+        var xStep = chartWidth / (points.length - 1)
+        var pointPairs = points.map(function (point, index) {
+          var x = Math.round(index * xStep)
+          var y = Math.round(chartHeight - (point * 1.9))
+
+          return [x, y]
+        })
+        var linePoints = pointPairs.map(function (pair) {
+          return pair.join(',')
+        }).join(' ')
+        var areaPoints = ['0,220'].concat(linePoints.split(' ')).concat(['420,220']).join(' ')
+
+        line.setAttribute('points', linePoints)
+        area.setAttribute('points', areaPoints)
+        dots.innerHTML = ''
+
+        pointPairs.forEach(function (pair) {
+          var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+
+          circle.setAttribute('cx', pair[0])
+          circle.setAttribute('cy', pair[1])
+          circle.setAttribute('r', 6)
+          circle.setAttribute('fill', '#ffffff')
+          circle.setAttribute('stroke', '#1560d8')
+          circle.setAttribute('stroke-width', 4)
+          dots.appendChild(circle)
+        })
+      }
+
+      function renderIssues(issues) {
+        var issueList = document.getElementById('issue-list')
+
+        issueList.innerHTML = ''
+
+        issues.forEach(function (issue) {
+          var wrapper = createElement('div', 'mb-3')
+          var header = createElement('div', 'd-flex justify-content-between small mb-2')
+          var track = createElement('div', 'mini-bar-track')
+          var fill = createElement('div', 'mini-bar-fill')
+
+          header.appendChild(createElement('span', '', issue.label))
+          header.appendChild(createElement('strong', '', issue.share + '%'))
+          fill.style.width = issue.share + '%'
+          fill.setAttribute('aria-hidden', 'true')
+          track.appendChild(fill)
+          wrapper.appendChild(header)
+          wrapper.appendChild(track)
+          issueList.appendChild(wrapper)
+        })
+      }
+
+      function renderRegions(regions) {
+        var regionList = document.getElementById('region-list')
+
+        regionList.innerHTML = ''
+
+        regions.forEach(function (region) {
+          var row = createElement('div', 'd-flex justify-content-between align-items-center mb-3')
+          var left = createElement('div')
+          var right = createElement('div', 'text-right')
+          var pill = createElement('span', 'status-pill mb-1 status-' + region.tone, region.status)
+
+          left.appendChild(createElement('strong', 'd-block', region.name))
+          left.appendChild(createElement('small', 'text-muted', 'Session success'))
+          right.appendChild(pill)
+          right.appendChild(createElement('strong', 'd-block', region.value))
+          row.appendChild(left)
+          row.appendChild(right)
+          regionList.appendChild(row)
+        })
+      }
+
+      function renderRecommendations(recommendations) {
+        var recommendationList = document.getElementById('recommendation-list')
+
+        recommendationList.innerHTML = ''
+
+        recommendations.forEach(function (recommendation, index) {
+          var column = createElement('div', 'col-lg-4 mb-3 mb-lg-0')
+          var card = createElement('div', 'h-100 p-3')
+
+          card.style.border = '1px solid rgba(18, 38, 63, 0.08)'
+          card.style.borderRadius = '18px'
+          card.style.background = '#f8fbff'
+          card.appendChild(createElement('span', 'badge badge-primary mb-2', String(index + 1)))
+          card.appendChild(createElement('p', 'small mb-0', recommendation))
+          column.appendChild(card)
+          recommendationList.appendChild(column)
+        })
+      }
+
+      function renderScenario(scenario) {
+        currentScenario = scenario
+
+        document.getElementById('scenario-account').textContent = scenario.account_name
+        document.getElementById('scenario-environment').textContent = scenario.environment
+        document.getElementById('scenario-summary').textContent = scenario.summary
+        document.getElementById('scenario-score').textContent = scenario.score
+        document.getElementById('scenario-score-pill').textContent = scenario.score_label
+        document.getElementById('scenario-score-pill').className = 'status-pill mb-2 status-' + scenario.score_tone
+        document.getElementById('scenario-score-delta').textContent = scenario.score_delta
+        document.getElementById('spotlight-eyebrow').textContent = scenario.spotlight_eyebrow
+        document.getElementById('spotlight-title').textContent = scenario.spotlight_title
+        document.getElementById('spotlight-copy').textContent = scenario.spotlight_copy
+        document.getElementById('trend-title').textContent = scenario.trend_title
+        document.getElementById('trend-delta').textContent = scenario.trend_delta
+        document.getElementById('impact-badge').textContent = scenario.impacted_label
+
+        renderKpis(scenario.kpis)
+        renderTrend(scenario.trend_points)
+        renderIssues(scenario.issue_breakdown)
+        renderRegions(scenario.regions)
+        renderRecommendations(scenario.recommendations)
+        updateScenarioButtons()
+        showStep(activeStep)
+      }
+
+      function showStep(index) {
+        activeStep = index
+
+        stepButtons.forEach(function (button, buttonIndex) {
+          button.classList.toggle('active', buttonIndex === index)
+        })
+
+        Array.prototype.slice.call(document.querySelectorAll('[data-panel-group]')).forEach(function (panel) {
+          var group = Number(panel.getAttribute('data-panel-group'))
+          panel.classList.toggle('active-panel', group === index)
+        })
+      }
+
+      function clearAutoplay() {
+        if (autoplayTimer) {
+          window.clearInterval(autoplayTimer)
+          autoplayTimer = null
+        }
+      }
+
+      function startAutoplay() {
+        clearAutoplay()
+        autoplayTimer = window.setInterval(function () {
+          activeStep = (activeStep + 1) % stepButtons.length
+          showStep(activeStep)
+        }, autoplayDelay)
+      }
+
+      stepButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          showStep(Number(button.getAttribute('data-step-target')))
+          startAutoplay()
+        })
+      })
+
+      scenarioButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          var scenarioId = button.getAttribute('data-scenario-id')
+          var nextScenario = scenarios.find(function (scenario) {
+            return scenario.id === scenarioId
+          }) || scenarios[0]
+
+          renderScenario(nextScenario)
+        })
+      })
+
+      if (replayButton) {
+        replayButton.addEventListener('click', function () {
+          showStep(0)
+          startAutoplay()
+        })
+      }
+
+      window.setTimeout(function () {
+        if (loading) {
+          loading.classList.add('hidden')
+        }
+
+        renderScenario(scenarios.find(function (scenario) {
+          return scenario.id === initialScenarioId
+        }) || scenarios[0])
+        startAutoplay()
+      }, 1450)
+    })()
+  </script>
+{% endblock %}
